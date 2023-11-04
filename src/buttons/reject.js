@@ -8,6 +8,7 @@ const {
 const moment = require("moment");
 const wait = require("util").promisify(setTimeout);
 
+const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 const messages = require("../assest/messages.js");
 const banners = require("../assest/banners.js");
 const errors = require("../assest/errors.js");
@@ -92,10 +93,27 @@ module.exports = async (client, config) => {
       const ID = interaction.message.embeds[0].footer.text;
       const ap_user = await interaction.guild.members.fetch(ID);
 
-      await ap_user.roles
-        .remove(config.waitRole)
-        .catch(() => console.log("Error 2583"));
+      const expiryInMinutes = 60; // Example: role expires in 60 minutes
 
+      const expiryDate = new Date();
+      expiryDate.setMinutes(expiryDate.getMinutes() + expiryInMinutes);
+
+      const temporaryRole = new TemporaryRole({
+        userId: ap_user.id,
+        guildId: guild.id,
+        roleId: config.coolDown,
+        expiry: expiryDate,
+      });
+
+      try {
+        await temporaryRole.save(); // Save the temporary role data to the database
+
+        // Assign the role to the member
+        await ap_user.roles.remove(config.waitRole);
+        await ap_user.roles.add(config.coolDown);
+      } catch (err) {
+        console.error("Error assigning temporary role:", err);
+      }
       try {
         await ap_user.send({
           embeds: [

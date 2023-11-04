@@ -16,7 +16,7 @@ console.log(
   `\x1b[33m`,
   `\x1b[7m`,
   `\x1b[1m`,
-  `                  PARFAIT OFFICIAL VERSION BY EGYGAMER                 `,
+  `                     PARFAIT™ DEV VERSION BY EGYGAMER                   `,
 );
 console.log(
   `\x1b[0m`,

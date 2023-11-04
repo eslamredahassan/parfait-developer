@@ -5,6 +5,7 @@ const config = require("./src/config");
 const ready = require("./src/utils/ready");
 const antiCrash = require("./src/utils/antiCrash");
 const slashCommands = require("./src/utils/slashCommands");
+const expired = require(`./src/events/expired.js`);
 const server = require("./src/utils/server");
 const logo = require("./src/assest/logo");
 const moment = require("moment");
@@ -16,6 +17,7 @@ const client = new Client({
     "GUILD_MEMBERS",
     "DIRECT_MESSAGES",
     "MESSAGE_CONTENT",
+    "DIRECT_MESSAGES",
   ],
   partials: ["CHANNEL", "MESSAGE"],
 });
@@ -25,6 +27,7 @@ client.on("ready", async () => {
   antiCrash(client, config);
   ready(client, config);
   slashCommands(client, config);
+  expired(client, config);
 
   // ------ Slash Command ------- //
   const setup_embed = require(`./src/commands/setup/setup_embed`)(

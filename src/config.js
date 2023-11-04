@@ -13,20 +13,15 @@ module.exports = {
   //--------------------------------------//
 
   //------| Accepted member roles |-------//
+  staffSun: process.env.staffSun,
   SquadSUN: process.env.SquadSUN,
-  TeamSun: process.env.TeamSun,
   SunTest: process.env.SunTest,
+  TeamSun: process.env.TeamSun,
   //--------------------------------------//
 
   //----| Banned member from app role |----//
   banRole: process.env.banRole,
   coolDown: process.env.coolDown,
-  //--------------------------------------//
-
-  //-----| Staff and Staff Sun role |----//
-  STAFF: process.env.STAFF,
-  staffRole: process.env.staffRole,
-  staffSun: process.env.staffSun,
   //--------------------------------------//
 
   //---------| Discord server id |--------//
@@ -35,10 +30,6 @@ module.exports = {
 
   //---| Applied member waiting role |----//
   waitRole: process.env.waitRole,
-  //--------------------------------------//
-
-  //--------| Server Admin role |---------//
-  adminRole: process.env.adminRole,
   //--------------------------------------//
 
   //------| Languages Roles |------//
@@ -57,11 +48,23 @@ module.exports = {
   channelID: process.env.channelID,
   reportBugChannel: process.env.reportBugChannel,
   dmDevChannel: process.env.dmDevChannel,
+  parfaitInbox: process.env.parfaitInbox,
   log: process.env.log,
   //--------------------------------------//,
 
   //-----------| Developer Log |-----------//
   Dev_Log: process.env.dev_log,
   devRole: process.env.devRole,
+  devRoleTest: process.env.devRoleTest,
+  devID: process.env.devID,
+  commandID: process.env.commandID,
+  //--------------------------------------//,
+
+  //-------------| Database |-------------//
+  database: process.env.db,
+  //--------------------------------------//,
+
+  //-------------| API Keys |-------------//
+  OpenAI_key: process.env.OpenAI_Key,
   //--------------------------------------//,
 };

@@ -5,6 +5,7 @@ const wait = require("util").promisify(setTimeout);
 const cooldown = new Set();
 require("moment-duration-format");
 
+const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 const errors = require("../../src/assest/errors.js");
 const color = require("../../src/assest/color.js");
 const banners = require("../../src/assest/banners.js");
@@ -21,8 +22,11 @@ module.exports = async (client, config) => {
           {
             const member = interaction.options.getUser("who");
             const reason = interaction.options.getString("reason");
+            const durationInDays = interaction.options.getInteger("duration");
 
-            const perms = [`${config.devRole}`, `${config.STAFF}`];
+            await interaction.deferReply({ ephemeral: true });
+
+            const perms = [`${config.devRole}`, `${config.devRoleTest}`];
             let staff = guild.members.cache.get(interaction.user.id);
             if (staff.roles.cache.hasAny(...perms)) {
               // Send Echo Message To Mentioned Room
@@ -31,7 +35,34 @@ module.exports = async (client, config) => {
               );
 
               if (!memberTarget.roles.cache.hasAny(config.banRole)) {
-                await memberTarget.roles.add(config.banRole);
+                try {
+                  const expiryDate = new Date();
+                  expiryDate.setDate(expiryDate.getDate() + durationInDays);
+
+                  if (!memberTarget) {
+                    await interaction.reply("Member not found.");
+                    return;
+                  }
+
+                  await memberTarget.roles.add(config.banRole);
+                  await TemporaryRole.create({
+                    userId: memberTarget.id,
+                    roleId: config.banRole,
+                    expiry: expiryDate,
+                  });
+
+                  await interaction.editReply({
+                    content: `Okay ${interaction.user.username} you frozen ${memberTarget} for ${durationInDays} days.`,
+                    ephemeral: true,
+                  });
+                } catch (error) {
+                  console.error("Error giving temporary role:", error);
+                  await interaction.editReply({
+                    content:
+                      "An error occurred while giving the temporary role.",
+                    ephemeral: true,
+                  });
+                }
                 //// Send message to log channel after freezing member ///
                 const log = interaction.guild.channels.cache.get(config.log);
                 await log.send({
@@ -58,7 +89,7 @@ module.exports = async (client, config) => {
                   ephemeral: false,
                 });
 
-                await interaction.reply({
+                await interaction.editReply({
                   embeds: [
                     {
                       title: `${emojis.snow} Done!`,
@@ -69,7 +100,7 @@ module.exports = async (client, config) => {
                   ephemeral: true,
                 });
               } else {
-                return await interaction.reply({
+                return await interaction.editReply({
                   embeds: [
                     {
                       title: `${emojis.alert} Oops!`,
@@ -81,7 +112,7 @@ module.exports = async (client, config) => {
                 });
               }
             } else {
-              await interaction.reply({
+              await interaction.editReply({
                 embeds: [
                   {
                     title: `${emojis.alert} Permission denied`,

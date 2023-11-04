@@ -2,14 +2,14 @@ const moment = require("moment");
 require("moment-duration-format");
 
 module.exports = {
-  /// Setup UI ///
+  ///---| Setup UI |---///
   lock: "<:lock:1116944924403834880>",
   unlock: "<:unlock:1116944921094520874>",
   options: "<:options:1117157341155037284>",
   settings: "<:settings:1117164163433779231>",
   //--------------------------------------//,
 
-  /// UI Emojis ///
+  ///---| UI Emojis |---///
   apply: "<:sun:1091789220634427442>",
   requirements: "<:requirements:1091785585573756938>",
   more: "<:more:1091788375729647718>",
@@ -22,6 +22,7 @@ module.exports = {
   dev: "<:dev:1106074934414934046>",
   trial: "<:file:1129938258067996693>",
   maintenance: "<:maintenance:1099627178158723144>",
+  req_warning: "<:req_warning:1159216913793159208>",
   //--------------------------------------//,
 
   ///---| FAQ Emojis |---///
@@ -31,20 +32,20 @@ module.exports = {
   questions: "<:questions:1147320597643276368>",
   //--------------------------------------//,
 
-  /// Embed Emojis ///
-  info: "<:info:1088099680380006400>",
-  warn: "<:infowarn:1088102316483289127>",
-  stop: "<:stop:1091852564598890546>",
-  //--------------------------------------//,
-
-  /// About Command ///
+  ///---| About Command |---///
   developer: "<:developer:1115319798423879883>",
   build: "<:build:1115319794888097883>",
   version: "<:version:1115319790421151794>",
   order: "<:order:1115319785245384746>",
   //--------------------------------------//,
 
-  /// About Button Emojis ///
+  ///---| Embed Emojis |---///
+  info: "<:info:1088099680380006400>",
+  warn: "<:infowarn:1088102316483289127>",
+  stop: "<:stop:1091852564598890546>",
+  //--------------------------------------//,
+
+  ///---| About Button Emojis |---///
   achv: "<:achievement:1094889958738767872>",
   soc: "<:social:1094891857332404244>",
   youtube: "<:youtube:1094899519860265041>",
@@ -61,11 +62,11 @@ module.exports = {
   partner: "<:partnersun:1096508673351757996>",
   //--------------------------------------//,
 
-  /// About Button Emojis ///
+  ///---| About Button Emojis |---///
   not: "<:not:1096510208110510120>",
   //--------------------------------------//,
 
-  /// Requirements Button Emojis ///
+  ///---| Requirements Button Emojis |---///
   warning: "<:warning:1091830849084866721>",
   rules: "<:rules:1094913016342007848>",
   rank: "<:rank:1091832357679550564>",
@@ -76,20 +77,19 @@ module.exports = {
   level: "<:level:1091835577852239916>",
   alert: "<:alert:1091836744325939281>",
   map: "<:map:1096194530732146769>",
-  guide: "<:guide:1163829548853514351>",
   forb: "<:forb:1096200263712378983>",
+  guide: "<:guide:1163829548853514351>",
   //--------------------------------------//,
 
-  /// UI Alerts Emojis ///
+  ///---| UI Alerts Emojis |---///
   check: "<:check:1088116412960219237>",
   cross: "<:crossed:1088654826994413678>",
   //--------------------------------------//,
 
-  /// Finish Embed UI Emojis ///
+  ///---| Finish Embed UI Emojis |---///
   slgg: "<:slgg:1086678716941340692>",
   slg: "<:SL:1109104172479021116>",
   accept: "<:accept:1095829774431158472>",
-  reject: "<:reject:1095829772585676822>",
   s_accept: "<:silentaccept:1114986959518048356>",
   reject: "<:reject:1095829772585676822>",
   s_reject: "<:silentreject:1114987092917891133>",
@@ -118,20 +118,25 @@ module.exports = {
   promoted: "<:promoted:1156951485171630201>",
   //--------------------------------------//,
 
-  /// Parfait Emojis ///
+  ///---| Parfait Emojis |---///
   s_parfait: "<:SPice:1080958776351399976>",
   f_parfait: "<:SPfrost:1080972327740788816>",
   sad_parfait: "<:SPnapkin:1080958770093494312>",
   //--------------------------------------//,
 
-  /// Sun Emojis ///
-  salut: "<:parfait_salut:1094762467269287967>",
-  pandaLove: "<:PandaLove:950906088285433857>",
-  peter: "<:peter_siffle:1001866664951955468>",
-  robin: "<:robin_vin:1002005365661118534>",
+  ///---| Reactions |---///
+  sun: "<:sun:1119209401929171065>",
+  robin: "<:robin_vin:1119209400238878720>",
+  yongyong: "<:yongyong_salut:1119209404114403409>",
+  pandaLove: "<:PandaLove:1119209391892217948>",
+  pandaHuge: "<:PandaHugg:1119209386972299284>",
+  octavia: "<:octavine_chante:1119209384602509383>",
+  pepeBusiness: "<:pepebusiness:1119209395864207460>",
+  wow: "<:nui_fantome:1119209377702883369>",
+  love: "<:love:1119209373705707540>",
   //--------------------------------------//,
 
-  /// Other ///
+  ///---| Other |---///
   whiteDot: "<:dotwhite:1083194966446182481>",
   greyDot: "<:dotgrey:1083194964743303208>",
   pinkDot: "<:dotpink:1094866146240507924>",
@@ -139,12 +144,14 @@ module.exports = {
   threadMarkmid: "<:thread_mark_mid:1131481582893551626>",
   discord: "<:discord:1091783375381090454>",
   required: "<:required:1091857374270210209>",
-  active: "<:active:1091861795016282202> ",
-  step: "<:step:1097415310589579304>",
+  active: "<:active:1091861795016282202>",
+  step: "<:step:1095867770723381398>",
   next: "<:next:1111758465409486919>",
   back: "<:back:1111758588495536178>",
   home: "<:home:1113809764481257542>",
   repeat: "<:repeat:1116426451961520268>",
+  bug: "<:bug:1157356126980018309>",
+  newMail: "<:new_message:1157366920765513778>",
   //--------------------------------------//,
 
   ///---| Status Menu |---///
@@ -178,6 +185,6 @@ console.log(
   `\x1b[0m`,
   `\x1b[31m 〢`,
   `\x1b[33m ${moment(Date.now()).format("LT")}`,
-  `\x1b[31m Emojis File`,
+  `\x1b[31m Color File`,
   `\x1b[32m LOADED`,
 );

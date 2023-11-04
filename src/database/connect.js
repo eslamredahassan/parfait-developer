@@ -6,9 +6,6 @@ module.exports = async () => {
   // Connect to MongoDB
   mongoose
     .connect(config.database, {
-      serverSelectionTimeoutMS: 30000, // 30 seconds
-      socketTimeoutMS: 45000, // 45 seconds
-      connectTimeoutMS: 30000, // 30 seconds
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })

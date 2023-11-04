@@ -3,9 +3,11 @@ Client.setMaxListeners(0);
 
 const config = require("./src/config");
 const ready = require("./src/utils/ready");
+const connect = require("./src/database/connect");
 const antiCrash = require("./src/utils/antiCrash");
 const slashCommands = require("./src/utils/slashCommands");
 const expired = require(`./src/events/expired.js`);
+const stickyRole = require(`./src/events/stickyRole.js`);
 const server = require("./src/utils/server");
 const logo = require("./src/assest/logo");
 const moment = require("moment");
@@ -19,7 +21,7 @@ const client = new Client({
     "MESSAGE_CONTENT",
     "DIRECT_MESSAGES",
   ],
-  partials: ["CHANNEL", "MESSAGE"],
+  partials: ["CHANNEL", "MESSAGE", "MEMBERS"],
 });
 
 client.on("ready", async () => {
@@ -27,7 +29,9 @@ client.on("ready", async () => {
   antiCrash(client, config);
   ready(client, config);
   slashCommands(client, config);
+  connect(client, config);
   expired(client, config);
+  stickyRole(client, config);
 
   // ------ Slash Command ------- //
   const setup_embed = require(`./src/commands/setup/setup_embed`)(

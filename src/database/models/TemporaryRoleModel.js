@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const TemporaryRoleSchema = new mongoose.Schema({
   userId: String,
@@ -7,6 +7,6 @@ const TemporaryRoleSchema = new mongoose.Schema({
   expiry: Date,
 });
 
-const TemporaryRole = mongoose.model("TemporaryRole", TemporaryRoleSchema);
+const TemporaryRole = mongoose.model('TemporaryRole', TemporaryRoleSchema);
 
 module.exports = TemporaryRole;

@@ -5,7 +5,7 @@ const config = require("./src/config");
 const ready = require("./src/utils/ready");
 const connect = require("./src/database/connect");
 const antiCrash = require("./src/utils/antiCrash");
-const slashCommands = require("./src/utils/slashCommands");
+const deployCommands = require("./src/utils/deployCommands");
 const expired = require(`./src/events/expired.js`);
 const stickyRole = require(`./src/events/stickyRole.js`);
 const server = require("./src/utils/server");
@@ -28,7 +28,7 @@ client.on("ready", async () => {
   server(client, config);
   antiCrash(client, config);
   ready(client, config);
-  slashCommands(client, config);
+  deployCommands(client, config);
   connect(client, config);
   expired(client, config);
   stickyRole(client, config);
@@ -50,8 +50,23 @@ client.on("ready", async () => {
   const report_bug = require(`./src/commands/report_bug`)(client, config);
   const contact_dev = require(`./src/commands/contact_dev`)(client, config);
   const echo = require(`./src/commands/echo`)(client, config);
-  const freeze_command = require(`./src/commands/freeze`)(client, config);
-  const unfreeze_command = require(`./src/commands/unfreeze`)(client, config);
+  const add_cooldown = require(`./src/commands/cooldown/add_cooldown`)(
+    client,
+    config,
+  );
+  const edit_cooldown = require(`./src/commands/cooldown/edit_cooldown`)(
+    client,
+    config,
+  );
+  const check_cooldown = require(`./src/commands/cooldown/check_cooldown`)(
+    client,
+    config,
+  );
+  const remove_cooldown = require(`./src/commands/cooldown/remove_cooldown`)(
+    client,
+    config,
+  );
+  const duration = require(`./src/commands/cooldown/duration`)(client, config);
   // -------------------------------------//
 
   // ------ Buttons Interactions ------- //

@@ -93,7 +93,7 @@ module.exports = async (client, config) => {
       const ID = interaction.message.embeds[0].footer.text;
       const ap_user = await interaction.guild.members.fetch(ID);
 
-      const expiryInMinutes = 1; // Example: role expires in 60 minutes
+      const expiryInMinutes = 65; // Example: role expires in 60 minutes
 
       const expiryDate = new Date();
       expiryDate.setMinutes(expiryDate.getMinutes() + expiryInMinutes);
@@ -116,13 +116,25 @@ module.exports = async (client, config) => {
       }
 
       try {
+        const temporaryRole = await TemporaryRole.findOne({
+          userId: ap_user.id,
+        });
+
         await ap_user.send({
           embeds: [
             new MessageEmbed()
               .setColor(color.gray)
               .setTitle(`${emojis.sad_parfait} Sorry mate`)
               .setImage(banners.dmRejectBanner)
-              .setDescription(reply || messages.reject),
+              .setDescription(
+                reply +
+                  `\nwill be able to try again on ${temporaryRole.expiry.toDateString(
+                    "",
+                  )}` ||
+                  `You can't join SUN, at least for now. Improve your gameplay and you will be able to try again on ${temporaryRole.expiry.toDateString(
+                    "",
+                  )}`,
+              ),
           ],
         });
       } catch (e) {

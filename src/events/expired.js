@@ -5,7 +5,7 @@ const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 
 module.exports = async (client, config) => {
   // Run this function every minute (adjust the cron schedule as needed)
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("*/1 * * * *", async () => {
     const currentTime = new Date();
     const expiredRoles = await TemporaryRole.find({
       expiry: { $lt: currentTime },
@@ -64,14 +64,14 @@ module.exports = async (client, config) => {
                   color: `#2b2d31`,
                   timestamp: new Date(),
                   footer: {
-                    text: "Rejected in",
+                    text: "Finished in",
                     icon_url: `https://i.imgur.com/NpNsiR1.png`,
                   },
                 },
               ],
               //this is the important part
               ephemeral: false,
-          });
+            });
           } catch (error) {
             console.error(
               `\x1b[0m`,

@@ -17,6 +17,8 @@ module.exports = async (client, config) => {
       switch (interaction.customId) {
         case "#requirements":
           {
+            await interaction.deferReply({ ephemeral: true });
+
             const answerButtons = new MessageActionRow().addComponents([
               new MessageButton()
                 .setStyle("SECONDARY")
@@ -95,7 +97,7 @@ module.exports = async (client, config) => {
                 iconURL: banners.parfaitIcon,
               });
 
-            await interaction.reply({
+            await interaction.editReply({
               embeds: [rules, requirements, notes, Guide],
               ephemeral: true,
               components: [answerButtons],

@@ -5,12 +5,12 @@ const wait = require("util").promisify(setTimeout);
 const cooldown = new Set();
 require("moment-duration-format");
 
-const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
+const TemporaryRole = require("../../../src/database/models/TemporaryRoleModel");
 
-const errors = require("../../src/assest/errors.js");
-const color = require("../../src/assest/color.js");
-const banners = require("../../src/assest/banners.js");
-const emojis = require("../../src/assest/emojis");
+const errors = require("../../../src/assest/errors.js");
+const color = require("../../../src/assest/color.js");
+const banners = require("../../../src/assest/banners.js");
+const emojis = require("../../../src/assest/emojis");
 
 module.exports = async (client, config) => {
   let guild = client.guilds.cache.get(config.guildID);
@@ -19,9 +19,9 @@ module.exports = async (client, config) => {
   client.on("interactionCreate", async (interaction) => {
     if (interaction.isCommand()) {
       switch (interaction.commandName) {
-        case "unfreeze":
+        case "remove_cooldown":
           {
-            const member = interaction.options.getUser("who");
+            const member = interaction.options.getUser("member");
             const reason = interaction.options.getString("reason");
 
             await interaction.deferReply({ ephemeral: true });
@@ -41,11 +41,23 @@ module.exports = async (client, config) => {
                   const role = guild.roles.cache.get(temporaryRole.roleId);
                   if (role) {
                     await memberTarget.roles.remove(role);
+
+                    await memberTarget.send({
+                      embeds: [
+                        new MessageEmbed()
+                          .setColor(color.gray)
+                          .setTitle(`${emojis.alert} Cooldown Removed`)
+                          .setDescription(
+                            `Your cooldown has been removed by ${interaction.user}.`,
+                          ),
+                      ],
+                    });
+
                     await interaction.editReply({
                       embeds: [
                         {
                           title: `${emojis.snow} Done!`,
-                          description: `Okay ${interaction.user.username} you break ${memberTarget}'s snow`,
+                          description: `Okay ${interaction.user.username} remove ${memberTarget}'s cooldown`,
                           color: color.gray,
                         },
                       ],
@@ -84,7 +96,7 @@ module.exports = async (client, config) => {
                 embeds: [
                   {
                     title: `${emojis.log} Frozen Log`,
-                    description: `${emojis.snow} ${memberTarget} have been break ${interaction.user}'s snow`,
+                    description: `${emojis.snow} ${memberTarget}'s cooldown removed by ${interaction.user}`,
                     color: color.gray,
                     fields: [
                       {

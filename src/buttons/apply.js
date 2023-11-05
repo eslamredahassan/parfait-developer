@@ -9,6 +9,7 @@ const {
 const moment = require("moment");
 const wait = require("util").promisify(setTimeout);
 
+const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 const messages = require("../assest/messages.js");
 const banners = require("../assest/banners.js");
 const color = require("../assest/color.js");
@@ -21,174 +22,215 @@ module.exports = async (client, config) => {
     if (interaction.isButton()) {
       switch (interaction.customId) {
         case "#ap_apply": {
-          console.log(
-            `\x1b[0m`,
-            `\x1b[31m 〢`,
-            `\x1b[33m ${moment(Date.now()).format("lll")}`,
-            `\x1b[34m ${interaction.user.username} USED`,
-            `\x1b[35m Apply Button`,
-          );
-          let member = guild.members.cache.get(interaction.user.id);
-          if (member.roles.cache.has(config.coolDown))
-            return interaction.reply({
-              embeds: [
-                {
-                  title: `${emojis.cooldown} Cooldown Member Detected`,
-                  description: `Hi ${interaction.user} you in <@&${config.coolDown}> duration, please try again later`,
-                  color: "DARK_RED",
-                },
-              ],
-              //this is the important part
-              ephemeral: true,
-            });
-          if (member.roles.cache.has(config.SquadSUN))
-            return interaction.reply({
-              embeds: [
-                {
-                  title: `${emojis.id} Sun Member Detected`,
-                  description: `Hi ${interaction.user} you already in <@&${config.SquadSUN}>`,
-                  color: "DARK_ORANGE",
-                },
-              ],
-              //this is the important part
-              ephemeral: true,
-            });
+          try {
+            console.log(
+              `\x1b[0m`,
+              `\x1b[31m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("lll")}`,
+              `\x1b[34m ${interaction.user.username} USED`,
+              `\x1b[35m Apply Button`,
+            );
+            let member = guild.members.cache.get(interaction.user.id);
+            if (member.roles.cache.has(config.coolDown)) {
+              const temporaryRole = await TemporaryRole.findOne({
+                userId: member.id,
+              });
+              if (temporaryRole) {
+                const roleExpiry = temporaryRole.expiry.getTime();
+                const currentTime = new Date().getTime();
+                let timeLeft = roleExpiry - currentTime;
 
-          let applyChannel = interaction.guild.channels.cache.get(
-            config.applyChannel,
-          );
-          if (!applyChannel) return;
+                if (timeLeft < 0) {
+                  timeLeft = 0;
+                }
 
-          const user = interaction.user;
-          const userName = user.username;
+                const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hoursLeft = Math.floor(
+                  (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+                );
+                const minutesLeft = Math.floor(
+                  (timeLeft % (1000 * 60 * 60)) / (1000 * 60),
+                );
 
-          const threadName = applyChannel.threads.cache.find(
-            (x) => x.name === `${"🧤︱" + userName + " Tryout"}`,
-          );
+                let timeLeftString = "";
+                if (daysLeft > 0) {
+                  timeLeftString += `${daysLeft} days`;
+                }
+                if (hoursLeft > 0) {
+                  timeLeftString += ` ${hoursLeft} hours`;
+                }
+                if (minutesLeft > 0 || (daysLeft === 0 && hoursLeft === 0)) {
+                  timeLeftString += ` ${minutesLeft} minutes`;
+                }
 
-          console.log(
-            `\x1b[0m`,
-            `\x1b[31m 〢`,
-            `\x1b[33m ${moment(Date.now()).format("lll")}`,
-            `\x1b[35m ${interaction.user.username}`,
-            `\x1b[36m TRYING TO`,
-            `\x1b[1m \x1b[32mApply Again `,
-          );
+                if (timeLeftString === "") {
+                  timeLeftString = "Expired";
+                }
 
-          if (member.roles.cache.has(config.waitRole))
-            return interaction.update({
-              embeds: [
-                {
-                  title: `${emojis.alert} Alert`,
-                  description: `Hi ${interaction.user} We've already received your application`,
-                  color: `${color.gray}`,
-                  fields: [
+                await interaction.update({
+                  embeds: [
                     {
-                      name: `${emojis.tryOut} You're now in try out process`,
-                      value: `${emojis.whiteDot} Check your try out post in ${threadName} thread`,
-                      inline: true,
+                      title: `${emojis.cooldown} Cooldown Member Detected`,
+                      description: `You still have **${timeLeftString}** in your cooldown period`,
+                      //image: { url: banners.langBanner },
+                      color: color.gray,
                     },
                   ],
-                },
-              ],
-              //this is the important part
-              ephemeral: true,
-              components: [],
-            });
+                  //this is the important part
+                  ephemeral: true,
+                  components: [],
+                });
+              }
+            }
+            if (member.roles.cache.has(config.SquadSUN))
+              return interaction.reply({
+                embeds: [
+                  {
+                    title: `${emojis.id} Sun Member Detected`,
+                    description: `Hi ${interaction.user} you already in <@&${config.SquadSUN}>`,
+                    color: "DARK_ORANGE",
+                  },
+                ],
+                //this is the important part
+                ephemeral: true,
+              });
 
-          if (member.roles.cache.has(config.banRole))
-            return interaction.update({
-              embeds: [
-                {
-                  title: `${emojis.banApp} Freezed Member`,
-                  description: `${emojis.whiteDot} Hi ${interaction.user} ${messages.Banned}`,
-                  color: `${color.gray}`,
-                  fields: [
-                    {
-                      name: `${emojis.question} If you think something is wrong`,
-                      value: `${emojis.whiteDot} Talk to **Staff** or **Staff Sun**`,
-                      inline: true,
-                    },
-                  ],
-                },
-              ],
-              //this is the important part
-              ephemeral: true,
-              components: [],
-            });
-          //// Modal application code ///
-          let application_modal = new Modal()
-            .setTitle(`📝 Sun Legend Application`)
-            .setCustomId(`application_modal`);
+            let applyChannel = interaction.guild.channels.cache.get(
+              config.applyChannel,
+            );
+            if (!applyChannel) return;
 
-          const user_code = new TextInputComponent()
-            .setCustomId("ap_usercode")
-            .setLabel(`Smash Code`.substring(0, 45))
-            .setMinLength(9)
-            .setMaxLength(9)
-            .setValue("jzso84o0q")
-            .setRequired(true)
-            .setPlaceholder(`Example: jzso84o0q`)
-            .setStyle(1);
+            const user = interaction.user;
+            const userName = user.username;
 
-          const user_age = new TextInputComponent()
-            .setCustomId("ap_userage")
-            .setLabel(`How old are You`.substring(0, 45))
-            .setMinLength(1)
-            .setMaxLength(2)
-            .setValue("27")
-            .setRequired(true)
-            .setPlaceholder(`Example: 18`)
-            .setStyle(1);
+            const threadName = applyChannel.threads.cache.find(
+              (x) => x.name === `${"🧤︱" + userName + " Tryout"}`,
+            );
 
-          const user_ct = new TextInputComponent()
-            .setCustomId("ap_userct")
-            .setLabel(
-              `Do you want to join competitions/trainings ?`.substring(0, 45),
-            )
-            .setMinLength(2)
-            .setMaxLength(3)
-            .setValue("Yes")
-            .setRequired(true)
-            .setPlaceholder(`Answer with Yes or No`)
-            .setStyle(1);
+            console.log(
+              `\x1b[0m`,
+              `\x1b[31m 〢`,
+              `\x1b[33m ${moment(Date.now()).format("lll")}`,
+              `\x1b[35m ${interaction.user.username}`,
+              `\x1b[36m TRYING TO`,
+              `\x1b[1m \x1b[32mApply Again `,
+            );
 
-          const user_legends = new TextInputComponent()
-            .setCustomId("ap_userlegends")
-            .setLabel(`What are your favorite legends ?`.substring(0, 45))
-            .setMinLength(4)
-            .setMaxLength(100)
-            .setValue("Peter, Ravi, Alice, Zeppetta")
-            .setRequired(true)
-            .setPlaceholder(`Example: Peter, Robin, Cindy, Victor`)
-            .setStyle(2);
+            if (member.roles.cache.has(config.waitRole))
+              return interaction.update({
+                embeds: [
+                  {
+                    title: `${emojis.alert} Alert`,
+                    description: `Hi ${interaction.user} We've already received your application`,
+                    color: `${color.gray}`,
+                    fields: [
+                      {
+                        name: `${emojis.tryOut} You're now in try out process`,
+                        value: `${emojis.whiteDot} Check your try out post in ${threadName} thread`,
+                        inline: true,
+                      },
+                    ],
+                  },
+                ],
+                //this is the important part
+                ephemeral: true,
+                components: [],
+              });
 
-          const user_why = new TextInputComponent()
-            .setCustomId("ap_userwhy")
-            .setLabel(`What can you bring to SUN ?`.substring(0, 45))
-            .setMinLength(4)
-            .setMaxLength(100)
-            .setValue("Developing Parfait bot")
-            .setRequired(true)
-            .setPlaceholder(`Answer here`)
-            .setStyle(2);
+            if (member.roles.cache.has(config.banRole))
+              return interaction.update({
+                embeds: [
+                  {
+                    title: `${emojis.banApp} Freezed Member`,
+                    description: `${emojis.whiteDot} Hi ${interaction.user} ${messages.Banned}`,
+                    color: `${color.gray}`,
+                    fields: [
+                      {
+                        name: `${emojis.question} If you think something is wrong`,
+                        value: `${emojis.whiteDot} Talk to **Staff** or **Staff Sun**`,
+                        inline: true,
+                      },
+                    ],
+                  },
+                ],
+                //this is the important part
+                ephemeral: true,
+                components: [],
+              });
+            //// Modal application code ///
+            let application_modal = new Modal()
+              .setTitle(`📝 Sun Legend Application`)
+              .setCustomId(`application_modal`);
 
-          let row_usercode = new MessageActionRow().addComponents(user_code);
-          let row_userage = new MessageActionRow().addComponents(user_age);
-          let row_userct = new MessageActionRow().addComponents(user_ct);
-          let row_userlegends = new MessageActionRow().addComponents(
-            user_legends,
-          );
-          let row_userwhy = new MessageActionRow().addComponents(user_why);
-          application_modal.addComponents(
-            row_usercode,
-            row_userage,
-            row_userct,
-            row_userlegends,
-            row_userwhy,
-          );
+            const user_code = new TextInputComponent()
+              .setCustomId("ap_usercode")
+              .setLabel(`Smash Code`.substring(0, 45))
+              .setMinLength(9)
+              .setMaxLength(9)
+              .setValue("jzso84o0q")
+              .setRequired(true)
+              .setPlaceholder(`Example: jzso84o0q`)
+              .setStyle(1);
 
-          await interaction.showModal(application_modal);
+            const user_age = new TextInputComponent()
+              .setCustomId("ap_userage")
+              .setLabel(`How old are You`.substring(0, 45))
+              .setMinLength(1)
+              .setMaxLength(2)
+              .setValue("27")
+              .setRequired(true)
+              .setPlaceholder(`Example: 18`)
+              .setStyle(1);
+
+            const user_ct = new TextInputComponent()
+              .setCustomId("ap_userct")
+              .setLabel(
+                `Do you want to join competitions/trainings ?`.substring(0, 45),
+              )
+              .setMinLength(2)
+              .setMaxLength(3)
+              .setValue("Yes")
+              .setRequired(true)
+              .setPlaceholder(`Answer with Yes or No`)
+              .setStyle(1);
+
+            const user_legends = new TextInputComponent()
+              .setCustomId("ap_userlegends")
+              .setLabel(`What are your favorite legends ?`.substring(0, 45))
+              .setMinLength(4)
+              .setMaxLength(100)
+              .setValue("Peter, Ravi, Alice, Zeppetta")
+              .setRequired(true)
+              .setPlaceholder(`Example: Peter, Robin, Cindy, Victor`)
+              .setStyle(2);
+
+            const user_why = new TextInputComponent()
+              .setCustomId("ap_userwhy")
+              .setLabel(`What can you bring to SUN ?`.substring(0, 45))
+              .setMinLength(4)
+              .setMaxLength(100)
+              .setValue("Developing Parfait bot")
+              .setRequired(true)
+              .setPlaceholder(`Answer here`)
+              .setStyle(2);
+
+            let row_usercode = new MessageActionRow().addComponents(user_code);
+            let row_userage = new MessageActionRow().addComponents(user_age);
+            let row_userct = new MessageActionRow().addComponents(user_ct);
+            let row_userlegends = new MessageActionRow().addComponents(
+              user_legends,
+            );
+            let row_userwhy = new MessageActionRow().addComponents(user_why);
+            application_modal.addComponents(
+              row_usercode,
+              row_userage,
+              row_userct,
+              row_userlegends,
+              row_userwhy,
+            );
+
+            await interaction.showModal(application_modal);
+          } catch (error) {}
         }
         default:
           break;

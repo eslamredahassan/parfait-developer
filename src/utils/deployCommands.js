@@ -67,14 +67,43 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "freeze",
-          description: `[Dev] Freeze a member from applying to SUN`,
+          name: "add_cooldown",
+          description: `[Dev] add cooldown a member to stop him from applying to SUN`,
           options: [
             {
-              name: "who",
-              description: "Mention the member you want to freeze him",
+              name: "member",
+              description:
+                "Mention the member you want to add a cooldown to him",
               type: 6, // MEMBER
               required: true,
+            },
+            {
+              name: "type",
+              description: "Select the cooldown duration type",
+              required: true,
+              type: 3, // STRING
+              choices: [
+                {
+                  name: "minutes",
+                  value: "minutes",
+                  description: "Set cooldown in minutes",
+                },
+                {
+                  name: "hours",
+                  value: "hours",
+                  description: "Set cooldown in hours",
+                },
+                {
+                  name: "days",
+                  value: "days",
+                  description: "Set cooldown in days",
+                },
+                {
+                  name: "months",
+                  value: "months",
+                  description: "Set cooldown in months",
+                },
+              ],
             },
             {
               name: "duration",
@@ -95,11 +124,72 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "unfreeze",
-          description: `[Dev] Unfreeze will break the snow and allow the member to applying to SUN again`,
+          name: "edit_cooldown",
+          description: `[Dev] edit cooldown of member that already has a cooldown`,
           options: [
             {
-              name: "who",
+              name: "member",
+              description:
+                "Mention the member you want to edit his cooldown period",
+              type: 6, // MEMBER
+              required: true,
+            },
+            {
+              name: "type",
+              description: "Select the cooldown duration type",
+              required: true,
+              type: 3, // STRING
+              choices: [
+                {
+                  name: "minutes",
+                  value: "minutes",
+                  description: "Set cooldown in minutes",
+                },
+                {
+                  name: "hours",
+                  value: "hours",
+                  description: "Set cooldown in hours",
+                },
+                {
+                  name: "days",
+                  value: "days",
+                  description: "Set cooldown in days",
+                },
+                {
+                  name: "months",
+                  value: "months",
+                  description: "Set cooldown in months",
+                },
+              ],
+            },
+            {
+              name: "duration",
+              description: "Set the freeze durations in days",
+              type: 4, // MEMBER
+              required: true,
+              min_length: 1,
+              max_length: 3,
+            },
+          ],
+        },
+        {
+          name: "check_cooldown",
+          description: `[Dev] remove the cooldown from the member to allow him to applying to SUN again`,
+          options: [
+            {
+              name: "member",
+              description: "Mention the member you want to break his snow",
+              type: 6, // MEMBER
+              required: true,
+            },
+          ],
+        },
+        {
+          name: "remove_cooldown",
+          description: `[Dev] remove the cooldown from the member to allow him to applying to SUN again`,
+          options: [
+            {
+              name: "member",
               description: "Mention the member you want to break his snow",
               type: 6, // MEMBER
               required: true,

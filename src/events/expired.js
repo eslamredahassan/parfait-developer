@@ -34,7 +34,7 @@ module.exports = async (client, config) => {
               `\x1b[31m 🛠`,
               `\x1b[33m ${moment(Date.now()).format("lll")}`,
               `\x1b[34m ${member.user.username}`,
-              `\x1b[32m Finished his frozen period`,
+              `\x1b[32m Finished his cooldown period`,
             );
             // Send a message in a specific channel
             const channel = guild.channels.cache.get(config.log); // Replace with your channel ID
@@ -94,13 +94,13 @@ module.exports = async (client, config) => {
             `\x1b[0m`,
             `\x1b[31m 🛠`,
             `\x1b[33m ${moment(Date.now()).format("lll")}`,
-            `\x1b[34m Frozen entry removed from the database`,
+            `\x1b[34m Cooldown entry removed from the database`,
           );
         } catch (error) {
           console.error(
             `\x1b[0m`,
             `\x1b[31m 🛠`,
-            `\x1b[33m Error removing frozen entry from the database:`,
+            `\x1b[33m Error removing cooldown entry from the database:`,
             `\x1b[34m ${error.message}`,
           );
         }

@@ -42,8 +42,8 @@ module.exports = async (client, config) => {
               channel.send({
                 embeds: [
                   {
-                    title: `<:log:1156940336501887047> Frozen Log`,
-                    description: `<:check:1088116412960219237> ${member.user} Finished his frozen period`,
+                    title: `<:log:1156940336501887047> Cooldown Log`,
+                    description: `<:check:1088116412960219237> ${member.user} Finished his cooldwon period`,
                     color: `#2b2d31`,
                     timestamp: new Date(),
                     footer: {
@@ -59,8 +59,8 @@ module.exports = async (client, config) => {
             member.send({
               embeds: [
                 {
-                  title: `<:log:1156940336501887047> Frozen Log`,
-                  description: `<:check:1088116412960219237> Your frozen period has been end feel free to reapply again`,
+                  title: `<:log:1156940336501887047> Cooldown Log`,
+                  description: `<:check:1088116412960219237> Your cooldown period has been end feel free to reapply again`,
                   color: `#2b2d31`,
                   timestamp: new Date(),
                   footer: {

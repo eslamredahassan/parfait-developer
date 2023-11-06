@@ -2,6 +2,7 @@ const { MessageEmbed } = require("discord.js");
 
 const os = require("os");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const wait = require("util").promisify(setTimeout);
 
 const packageJSON = require("../../package");
@@ -22,6 +23,35 @@ module.exports = async (client, config) => {
       switch (interaction.commandName) {
         case "status":
           {
+            await interaction.deferReply({ ephemeral: true });
+
+            const connection = mongoose.connection;
+            const readyState = connection.readyState;
+
+            let connectionStatus;
+            switch (readyState) {
+              case 0:
+                connectionStatus = "Disconnected";
+                break;
+              case 1:
+                connectionStatus = "Connected";
+                break;
+              case 2:
+                connectionStatus = "Connecting";
+                break;
+              case 3:
+                connectionStatus = "Disconnecting";
+                break;
+              default:
+                connectionStatus = "Unrecognized State";
+                break;
+            }
+
+            const info = {
+              status: connectionStatus,
+              database: connection.name,
+            };
+
             function uptimeString(seconds) {
               let days = Math.floor(seconds / (3600 * 24));
               seconds -= days * 3600 * 24;
@@ -29,7 +59,23 @@ module.exports = async (client, config) => {
               seconds -= hours * 3600;
               let minutes = Math.floor(seconds / 60);
               seconds -= minutes * 60;
-              return `${days} Days, ${hours} Hours, ${minutes} Minutes, and ${seconds} seconds`;
+
+              let uptime = "";
+
+              if (days > 0) {
+                uptime += `${days} Day${days !== 1 ? "s" : ""}, `;
+              }
+              if (hours > 0) {
+                uptime += `${hours} Hour${hours !== 1 ? "s" : ""}, `;
+              }
+              if (minutes > 0) {
+                uptime += `${minutes} Minute${minutes !== 1 ? "s" : ""}, `;
+              }
+              if (seconds > 0 || uptime === "") {
+                uptime += `${seconds} Second${seconds !== 1 ? "s" : ""}`;
+              }
+
+              return uptime;
             }
 
             const usedMemory = os.totalmem() - os.freemem(),
@@ -40,7 +86,7 @@ module.exports = async (client, config) => {
 
             const discordJSVersion = packageJSON.dependencies["discord.js"];
 
-            await interaction.reply({
+            await interaction.editReply({
               embeds: [
                 new MessageEmbed()
                   .setColor(color.gray)
@@ -61,7 +107,7 @@ module.exports = async (client, config) => {
                     },
                     {
                       name: `${emojis.db} Database`,
-                      value: `${emojis.threadMark} Offline`,
+                      value: `${emojis.threadMark} ${info.status}`,
                       inline: true,
                     },
                     {

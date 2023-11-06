@@ -7,7 +7,7 @@ const connect = require("./src/database/connect");
 const antiCrash = require("./src/utils/antiCrash");
 const deployCommands = require("./src/utils/deployCommands");
 const expired = require(`./src/events/expired.js`);
-const app_manager = require(`./src/events/app_manager.js`);
+const app_guard = require(`./src/events/app_guard.js`);
 const stickyRole = require(`./src/events/stickyRole.js`);
 const reminder = require(`./src/events/reminder.js`);
 const server = require("./src/utils/server");
@@ -35,7 +35,7 @@ client.on("ready", async () => {
   expired(client, config);
   stickyRole(client, config);
   reminder(client, config);
-  app_manager(client, config);
+  app_guard(client, config);
 
   // ------ Slash Command ------- //
   const remind = require(`./src/commands/remind`)(client, config);

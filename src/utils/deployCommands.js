@@ -205,6 +205,26 @@ module.exports = async (client, config) => {
           ],
         },
         {
+          name: "reminder",
+          description: `[Dev] remove the cooldown from the member to allow him to applying to SUN again`,
+          options: [
+            {
+              name: "time",
+              description: "Mention the member you want to break his snow",
+              type: 3, // STRING
+              required: true,
+            },
+            {
+              name: "message",
+              description: "Mention the member you want to break his snow",
+              type: 3, // STRING
+              required: true,
+              min_length: 2,
+              max_length: 1000,
+            },
+          ],
+        },
+        {
           name: "ask",
           description: `[Dev] Ask Parfait questions`,
           options: [

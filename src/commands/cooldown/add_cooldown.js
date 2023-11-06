@@ -150,7 +150,7 @@ module.exports = async (client, config) => {
                   });
                 }
               } catch (error) {
-                console.error("Error giving temporary role:", error);
+                console.error("Error giving temporary role:", error.message);
                 await interaction.editReply({
                   content: "An error occurred while giving the temporary role.",
                   ephemeral: true,
@@ -173,7 +173,12 @@ module.exports = async (client, config) => {
               content: errors.permsError,
               ephemeral: true,
             });
-            console.log("Permission denied");
+            console.log(
+              `\x1b[0m`,
+              `\x1b[31m 🛠`,
+              `\x1b[33m ${moment(Date.now()).format("lll")}`,
+              `\x1b[31m Permission denied`,
+            );
           }
         }
       }

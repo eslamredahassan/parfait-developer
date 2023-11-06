@@ -93,10 +93,10 @@ module.exports = async (client, config) => {
       const ID = interaction.message.embeds[0].footer.text;
       const ap_user = await interaction.guild.members.fetch(ID);
 
-      const expiryInMinutes = 65; // Example: role expires in 60 minutes
+      const expiryInDays = 30; // Example: role expires in 2 days
 
       const expiryDate = new Date();
-      expiryDate.setMinutes(expiryDate.getMinutes() + expiryInMinutes);
+      expiryDate.setDate(expiryDate.getDate() + expiryInDays);
 
       const temporaryRole = new TemporaryRole({
         userId: ap_user.id,
@@ -112,7 +112,10 @@ module.exports = async (client, config) => {
         await ap_user.roles.add(config.coolDown);
         await ap_user.roles.remove(config.waitRole);
       } catch (err) {
-        console.error(`Error assigning ${config.coolDown.name} role:`, err);
+        console.error(
+          `Error assigning ${config.coolDown.name} role:`,
+          err.message,
+        );
       }
 
       try {

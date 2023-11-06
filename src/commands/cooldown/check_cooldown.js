@@ -54,7 +54,7 @@ module.exports = async (client, config) => {
                 });
               }
             } catch (error) {
-              console.error("Error checking cooldown duration:", error);
+              console.error("Error checking cooldown duration:", error.message);
               await interaction.editReply({
                 content:
                   "An error occurred while checking the cooldown duration.",
@@ -67,6 +67,12 @@ module.exports = async (client, config) => {
                 "You don't have the required permissions to check cooldowns.",
               ephemeral: true,
             });
+            console.log(
+              `\x1b[0m`,
+              `\x1b[31m 🛠`,
+              `\x1b[33m ${moment(Date.now()).format("lll")}`,
+              `\x1b[31m Permission denied`,
+            );
           }
         }
       }

@@ -8,8 +8,10 @@ module.exports = async () => {
     .connect(config.database, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      dbName: "ParfaitDatabaseDev",
     })
     .then(() => {
+      //const connection = mongoose.connection.useDb("ParfaitDatabaseDev");
       console.log(
         `\x1b[0m`,
         `\x1b[31m 〢`,
@@ -24,7 +26,8 @@ module.exports = async () => {
         `\x1b[31m 〢`,
         `\x1b[33m ${moment(Date.now()).format("LT")}`,
         `\x1b[31m Database`,
-        `\x1b[323m ERROR: ${error.message}`,
+        `\x1b[323m ERROR: `,
+        error.message,
       );
     });
 };

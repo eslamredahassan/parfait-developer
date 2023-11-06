@@ -83,7 +83,7 @@ module.exports = async (client, config) => {
                   });
                 }
               } catch (error) {
-                console.error("Error removing temporary role:", error);
+                console.error("Error removing temporary role:", error.message);
                 await interaction.editReply({
                   content:
                     "An error occurred while removing your temporary role.",

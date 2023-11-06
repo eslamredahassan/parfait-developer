@@ -9,7 +9,7 @@ const {
 const moment = require("moment");
 const wait = require("util").promisify(setTimeout);
 
-const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
+const Application = require("../../src/database/models/application");
 const messages = require("../assest/messages.js");
 const banners = require("../assest/banners.js");
 const color = require("../assest/color.js");
@@ -368,12 +368,6 @@ module.exports = async (client, config) => {
       const app = await finishChannel
         .send({ embeds: [application], components: [firstRow, secondRow] })
         .then((msg) => msg.pin());
-      await app.startThread({
-        name: `${interaction.user.username}'s Application`,
-        autoArchiveDuration: 10080,
-        type: "GUILD_PRIVATE_THREAD",
-        reason: `${emojis.app} ${interaction.user.username} Requests to join SUN`,
-      });
 
       //// Console Log Data ///
       console.log(
@@ -403,83 +397,106 @@ module.exports = async (client, config) => {
         );
 
       //// Create Thread ///
+      let applyChannel = interaction.guild.channels.cache.get(
+        config.applyChannel,
+      );
+      if (!applyChannel) return;
+
+      const user = interaction.user;
+      const userName = user.username;
+
+      const thread = await applyChannel.threads.create({
+        name: "🧤︱" + userName + " Tryout",
+        autoArchiveDuration: 10080,
+        type: "GUILD_PRIVATE_THREAD",
+        reason: `${emojis.app} ${user} Requests to join SUN`,
+      });
+
+      const threads = applyChannel.threads.cache.find(
+        (x) => x.name === "🧤︱" + userName + " Tryout",
+      );
+
+      await threads.members
+        .add(user)
+        .catch(() => console.log("Error Line 3385"));
+
+      //// Send reply messge after applying ///
+      await interaction.update({
+        embeds: [
+          {
+            title: `${emojis.check} Your basic application has been sent for review`,
+            description: `- Thank you ${interaction.user} ${messages.appSentmessage} in ${threads} channel`,
+            color: color.gray,
+            ///thumbnail: { url: 'https://i.imgur.com/FiSTCop.png', },
+            image: { url: banners.appSentbanner },
+          },
+        ],
+        //this is the important part
+        ephemeral: true,
+        components: [],
+      });
+      //// Send message in thread ///
+      let controller = new MessageActionRow().addComponents([
+        new MessageButton()
+          .setStyle(2)
+          .setDisabled(false)
+          .setCustomId("#thread_start")
+          .setLabel(`Continue`)
+          .setEmoji(emojis.next),
+      ]);
+
+      await thread.sendTyping();
+      await wait(5000);
+
+      await thread.send({
+        content: `${emojis.pinkDot} Hi ${user} We need to complete some information in your application\n${emojis.threadMarkmid} Press continue to start see the questions\n${emojis.threadMarkmid} Answer each question separately after using the reply button\n${emojis.threadMarkmid} Skipping the questions or spamming the button causes your application to be rejected\n${emojis.threadMark} Your answers most be in **English**`,
+        components: [controller],
+      });
+
+      console.log(
+        `\x1b[0m`,
+        `\x1b[31m ├`,
+        `\x1b[33m ${moment(Date.now()).format("lll")}`,
+        `\x1b[32m Created thread`,
+        `\x1b[35m ${thread.name}`,
+      );
+      const newApplication = new Application({
+        userId: interaction.user.id,
+        username: interaction.user.username,
+        user_code,
+        user_ct,
+        user_ct,
+        user_legends,
+        user_why,
+        application: app.id, // This should be the interaction ID; store it if needed
+        thread: thread.id,
+        //new: true,
+      });
+
       try {
-        let applyChannel = interaction.guild.channels.cache.get(
-          config.applyChannel,
-        );
-        if (!applyChannel) return;
-
-        const user = interaction.user;
-        const userName = user.username;
-
-        const thread = await applyChannel.threads.create({
-          name: "🧤︱" + userName + " Tryout",
-          autoArchiveDuration: 10080,
-          type: "GUILD_PRIVATE_THREAD",
-          reason: `${emojis.app} ${user} Requests to join SUN`,
-        });
-
-        const threads = applyChannel.threads.cache.find(
-          (x) => x.name === "🧤︱" + userName + " Tryout",
-        );
-
-        await threads.members
-          .add(user)
-          .catch(() => console.log("Error Line 3385"));
-
-        //// Send reply messge after applying ///
-        await interaction.update({
-          embeds: [
-            {
-              title: `${emojis.check} Your basic application has been sent for review`,
-              description: `- Thank you ${interaction.user} ${messages.appSentmessage} in ${threads} channel`,
-              color: color.gray,
-              ///thumbnail: { url: 'https://i.imgur.com/FiSTCop.png', },
-              image: { url: banners.appSentbanner },
-            },
-          ],
-          //this is the important part
-          ephemeral: true,
-          components: [],
-        });
-
-        //// Send message in thread ///
-        let dev = new MessageActionRow().addComponents([
-          new MessageButton()
-            .setStyle(2)
-            .setDisabled(false)
-            .setCustomId("#ap_giveup")
-            .setLabel(`[Dev] Tryout Report`)
-            .setEmoji(emojis.dev),
-        ]);
-        //// Send message in thread ///
-        let controller = new MessageActionRow().addComponents([
-          new MessageButton()
-            .setStyle(2)
-            .setDisabled(false)
-            .setCustomId("#thread_start")
-            .setLabel(`Continue`)
-            .setEmoji(emojis.next),
-        ]);
-
-        await thread.sendTyping();
-        await wait(5000);
-
-        await thread.send({
-          content: `${emojis.pinkDot} Hi ${user} We need to complete some information in your application\n${emojis.threadMarkmid} Press continue to start see the questions\n${emojis.threadMarkmid} Answer each question separately after using the reply button\n${emojis.threadMarkmid} Skipping the questions or spamming the button causes your application to be rejected\n${emojis.threadMark} Your answers most be in **English**`,
-          components: [controller],
-        });
-
+        await newApplication.save();
         console.log(
           `\x1b[0m`,
-          `\x1b[31m 〢`,
+          `\x1b[32m ├`,
           `\x1b[33m ${moment(Date.now()).format("lll")}`,
-          `\x1b[34m Created thread for`,
-          `\x1b[35m ${thread.name}`,
+          `\x1b[32m Application saved to`,
+          `\x1b[35m database`,
         );
       } catch (error) {
-        console.log(error);
+        console.error(
+          `\x1b[0m`,
+          `\x1b[32m └`,
+          `\x1b[33m Error saving application data:`,
+          `\x1b[35m$ ${error.message}`,
+        );
       }
+      await app.startThread({
+        name: `${interaction.user.username}'s Application`,
+        autoArchiveDuration: 10080,
+        type: "GUILD_PRIVATE_THREAD",
+        reason: `${emojis.app} ${interaction.user.username} Requests to join SUN`,
+      });
+
       ////----------------------------////
 
       //// Add Waitlist Role ///
@@ -488,9 +505,9 @@ module.exports = async (client, config) => {
         .catch(() => console.log("Error Line 3478"));
       console.log(
         `\x1b[0m`,
-        `\x1b[31m 🛠`,
+        `\x1b[31m └`,
         `\x1b[33m ${moment(Date.now()).format("lll")}`,
-        `\x1b[34m Sun wannabe role added to`,
+        `\x1b[34m ${config.waitRole.name}`,
         `\x1b[34m ${interaction.user.username}`,
       );
       ////----------------------------////

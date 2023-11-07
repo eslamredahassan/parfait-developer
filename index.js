@@ -1,4 +1,6 @@
-const { Client } = require("discord.js");
+const { Client, Intents } = require("discord.js");
+const fs = require("fs");
+const path = require("path");
 Client.setMaxListeners(0);
 
 const config = require("./src/config");
@@ -16,14 +18,13 @@ const moment = require("moment");
 
 const client = new Client({
   intents: [
-    "GUILDS",
-    "GUILD_MESSAGES",
-    "GUILD_MEMBERS",
-    "DIRECT_MESSAGES",
-    "MESSAGE_CONTENT",
-    "DIRECT_MESSAGES",
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.DIRECT_MESSAGES,
+    Intents.FLAGS.MESSAGE_CONTENT,
   ],
-  partials: ["CHANNEL", "MESSAGE", "MEMBERS"],
+  partials: ["CHANNEL", "MESSAGE", "GUILD_MEMBER"],
 });
 
 client.on("ready", async () => {
@@ -37,62 +38,53 @@ client.on("ready", async () => {
   reminder(client, config);
   app_guard(client, config);
 
-  // ------ Slash Command ------- //
-  const remind = require(`./src/commands/remind`)(client, config);
-  const setup_embed = require(`./src/commands/setup/setup_embed`)(
-    client,
-    config,
-  );
-  const open = require(`./src/commands/setup/open`)(client, config);
-  const about = require(`./src/commands/about`)(client, config);
-  const ping = require(`./src/commands/ping`)(client, config);
-  const status = require(`./src/commands/status`)(client, config);
-  const close = require(`./src/commands/setup/close`)(client, config);
-  const maintenance = require(`./src/commands/setup/maintenance`)(
-    client,
-    config,
-  );
-  const report_bug = require(`./src/commands/report_bug`)(client, config);
-  const contact_dev = require(`./src/commands/contact_dev`)(client, config);
-  const echo = require(`./src/commands/echo`)(client, config);
-  const add_cooldown = require(`./src/commands/cooldown/add_cooldown`)(
-    client,
-    config,
-  );
-  const edit_cooldown = require(`./src/commands/cooldown/edit_cooldown`)(
-    client,
-    config,
-  );
-  const check_cooldown = require(`./src/commands/cooldown/check_cooldown`)(
-    client,
-    config,
-  );
-  const remove_cooldown = require(`./src/commands/cooldown/remove_cooldown`)(
-    client,
-    config,
-  );
-  const duration = require(`./src/commands/cooldown/duration`)(client, config);
-  // -------------------------------------//
-
-  // ------ Buttons Interactions ------- //
-  const apply = require(`./src/buttons/apply`)(client, config);
-  const accept = require(`./src/buttons/accept`)(client, config);
-  const silent_accept = require(`./src/buttons/silent_accept`)(client, config);
-  const promote = require(`./src/buttons/promote`)(client, config);
-  const reject = require(`./src/buttons/reject`)(client, config);
-  const silent_reject = require(`./src/buttons/silent_reject`)(client, config);
-  const aplogize = require(`./src/buttons/apologize`)(client, config);
-  const freeze = require(`./src/buttons/freeze`)(client, config);
-  const requirements = require(`./src/buttons/requirements`)(client, config);
-  const answer_yes = require(`./src/buttons/answer_yes`)(client, config);
-  const answer_no = require(`./src/buttons/answer_no`)(client, config);
-  const reply = require(`./src/buttons/reply`)(client, config);
-  // -------------------------------------//
-
-  // ------------ Select Menu ------------ //
-  const about_menu = require(`./src/select menu/about_menu`)(client, config);
-  const faq_menu = require(`./src/select menu/faq_menu`)(client, config);
-  // -------------------------------------//
+  // The directory where your slash command files are stored
+  const commandsDirectory = path.join(__dirname, "src/commands");
+  // Read all files in the directory
+  fs.readdir(commandsDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading commands directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const commandPath = path.join(commandsDirectory, file);
+        const command = require(commandPath);
+        command(client, config);
+      }
+    });
+  });
+  // The directory where your buttons files are stored
+  const buttonsDirectory = path.join(__dirname, "src/buttons");
+  fs.readdir(buttonsDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading buttons directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const buttonPath = path.join(buttonsDirectory, file);
+        const button = require(buttonPath);
+        button(client, config);
+      }
+    });
+  });
+  // The directory where your select menu files are stored
+  const selectMenuDirectory = path.join(__dirname, "src/select menu");
+  // Read all files in the directory
+  fs.readdir(selectMenuDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading select menu directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const selectMenuPath = path.join(selectMenuDirectory, file);
+        const selectMenu = require(selectMenuPath);
+        selectMenu(client, config);
+      }
+    });
+  });
 
   // ------------ Interactions ------------ //
   const questions = require(`./src/interaction/questions`)(client, config);
@@ -113,4 +105,4 @@ client.on("ready", async () => {
   );
 });
 
-client.login(config.token);
+client.login(config.token).catch((error) => ("Error:", error.message));

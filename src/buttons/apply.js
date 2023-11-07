@@ -507,7 +507,7 @@ module.exports = async (client, config) => {
         `\x1b[0m`,
         `\x1b[31m └`,
         `\x1b[33m ${moment(Date.now()).format("lll")}`,
-        `\x1b[34m ${config.waitRole.name}`,
+        `\x1b[34m Added ${config.waitRole.name} To`,
         `\x1b[34m ${interaction.user.username}`,
       );
       ////----------------------------////

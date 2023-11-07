@@ -1,5 +1,4 @@
-const { client } = require("discord.js");
-const OpenAI = require("openai");
+const { OpenAI } = require("openai");
 
 const messages = require("../assest/messages.js");
 const fieldsText = require("../assest/fieldsText.js");

@@ -47,11 +47,11 @@ module.exports = async (client, config) => {
                   break;
               }
 
-              const updatedRole = await TemporaryRole.findOneAndUpdate(
-                { userId: member.id },
-                { $set: { expiry: newExpiryDate } },
-                { new: true },
-              );
+              const updatedRole = await TemporaryRole.findOneAndUpdate({
+                userId: member.id,
+                expiry: newExpiryDate,
+                new: true,
+              });
 
               if (updatedRole) {
                 const timestamp = updatedRole.expiry.toLocaleString("en-GB", {
@@ -68,9 +68,7 @@ module.exports = async (client, config) => {
                   embeds: [
                     new MessageEmbed()
                       .setColor(color.gray)
-                      .setTitle(
-                        `${emojis.sad_parfait} Updated Cooldown End Date`,
-                      )
+                      .setTitle(`${emojis.sad_parfait} Cooldown Updated`)
                       .setDescription(
                         `${emojis.threadMark} Your cooldown has been updated. It will now end on ${timestamp}.`,
                       ),
@@ -81,7 +79,7 @@ module.exports = async (client, config) => {
                 await log.send({
                   embeds: [
                     {
-                      title: `${emojis.log} Cooldown Log`,
+                      title: `${emojis.log} Cooldown Udate Log`,
                       description: `${emojis.snow} ${interaction.user} updated the cooldown for ${memberTarget}`,
                       color: color.gray,
                       fields: [

@@ -101,7 +101,7 @@ module.exports = async (client, config) => {
                   await log.send({
                     embeds: [
                       {
-                        title: `${emojis.log} Cooldown Log`,
+                        title: `${emojis.log} Cooldown Add Log`,
                         description: `${emojis.snow} ${interaction.user} added cooldown to ${memberTarget} for ${duration} ${durationType}`,
                         color: color.gray,
                         fields: [

@@ -47,6 +47,11 @@ module.exports = async (client, config) => {
           type: "CHAT_INPUT",
         },
         {
+          name: "dev_test",
+          description: `[Dev] Test`,
+          type: "CHAT_INPUT",
+        },
+        {
           name: "echo",
           description: `[Dev] Parfait will send your message`,
           options: [
@@ -206,21 +211,22 @@ module.exports = async (client, config) => {
         },
         {
           name: "reminder",
-          description: `[Dev] remove the cooldown from the member to allow him to applying to SUN again`,
+          description: `[Dev] Set a reminder`,
           options: [
             {
-              name: "time",
-              description: "Mention the member you want to break his snow",
-              type: 3, // STRING
-              required: true,
-            },
-            {
               name: "message",
-              description: "Mention the member you want to break his snow",
+              description: "The reminder message",
               type: 3, // STRING
               required: true,
               min_length: 2,
               max_length: 1000,
+            },
+            {
+              name: "duration",
+              description:
+                "The duration of the reminder (e.g. 10s, 5m, 2h, 1d, 1mo)",
+              type: 3, // STRING
+              required: true,
             },
           ],
         },

@@ -39,21 +39,22 @@ client.on("ready", async () => {
   app_guard(client, config);
 
   // The directory where your slash command files are stored
-  const commandsDirectory = path.join(__dirname, "src/commands");
-  // Read all files in the directory
-  fs.readdir(commandsDirectory, (error, files) => {
-    if (error) {
-      console.error("Error reading commands directory:", error.message);
-      return;
-    }
-    files.forEach((file) => {
-      if (file.endsWith(".js")) {
-        const commandPath = path.join(commandsDirectory, file);
-        const command = require(commandPath);
+  const loadCommands = (directory) => {
+    fs.readdirSync(directory).forEach((file) => {
+      const fullPath = path.join(directory, file);
+      const stat = fs.statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        loadCommands(fullPath); // Recursively load commands in subdirectories
+      } else if (file.endsWith(".js")) {
+        const command = require(fullPath);
         command(client, config);
       }
     });
-  });
+  };
+
+  const commandsDirectory = path.join(__dirname, "src/commands");
+  loadCommands(commandsDirectory);
   // The directory where your buttons files are stored
   const buttonsDirectory = path.join(__dirname, "src/buttons");
   fs.readdir(buttonsDirectory, (error, files) => {

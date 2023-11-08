@@ -11,6 +11,10 @@ const ApplicationSchema = new mongoose.Schema({
   user_why: String,
   application: String,
   thread: String,
+  createdIn: {
+    type: Date,
+    default: Date.now, // Set a default value to the current date
+  },
 });
 
 // Create a model using the schema

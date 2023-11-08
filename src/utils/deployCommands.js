@@ -271,7 +271,7 @@ module.exports = async (client, config) => {
       ]);
       console.log(
         `\x1b[0m`,
-        `\x1b[31m 〢`,
+        `\x1b[33m ├`,
         `\x1b[33m ${moment(Date.now()).format("LT")}`,
         `\x1b[31m Slash Commands`,
         `\x1b[32m LOADED`,
@@ -279,7 +279,7 @@ module.exports = async (client, config) => {
     } catch (error) {
       console.log(
         `\x1b[0m`,
-        `\x1b[31m 〢`,
+        `\x1b[33m ├`,
         `\x1b[33m ${moment(Date.now()).format("LT")}`,
         `\x1b[31m Slash Commands`,
         `\x1b[323m ERROR: ${error.message}`,

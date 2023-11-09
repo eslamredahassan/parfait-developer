@@ -9,7 +9,7 @@ module.exports = async (client, config) => {
     const applyChannel = client.channels.cache.get(config.applyChannel);
 
     applyChannel.messages
-      .fetch({ limit: 2 })
+      .fetch({ limit: 10 })
       .then((messages) => {
         messages.forEach((message) => {
           if (message.embeds.length > 0) {
@@ -33,5 +33,5 @@ module.exports = async (client, config) => {
         });
       })
       .catch(console.error);
-  }, 1000); // Interval set to 1 second
+  }, 5000);
 };

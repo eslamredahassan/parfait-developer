@@ -231,6 +231,49 @@ module.exports = async (client, config) => {
           ],
         },
         {
+          name: "poll",
+          description: `[Dev] Set a reminder`,
+          options: [
+            {
+              name: "channel",
+              description: "Choose channel you want to send your message in",
+              type: 7, // CHANNEL
+              required: true,
+            },
+            {
+              name: "title",
+              description: "The reminder message",
+              type: 3, // STRING
+              required: true,
+              min_length: 2,
+              max_length: 1000,
+            },
+            {
+              name: "question",
+              description: "The reminder message",
+              type: 3, // STRING
+              required: true,
+              min_length: 2,
+              max_length: 1000,
+            },
+            {
+              name: "options",
+              description:
+                "The duration of the reminder (e.g. 10s, 5m, 2h, 1d, 1mo)",
+              type: 3, // STRING
+              required: true,
+            },
+            {
+              name: "duration",
+              description: "The reminder message",
+              type: 3, // STRING
+              required: true,
+              min_length: 2,
+              max_length: 1000,
+            },
+          ],
+        },
+        {
           name: "ask",
           description: `[Dev] Ask Parfait questions`,
           options: [
@@ -243,6 +286,11 @@ module.exports = async (client, config) => {
               max_length: 365,
             },
           ],
+        },
+        {
+          name: "end_poll",
+          description: `[Dev] Test`,
+          type: "CHAT_INPUT",
         },
         {
           name: "parfait",

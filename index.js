@@ -8,9 +8,6 @@ const ready = require("./src/utils/ready");
 const connect = require("./src/database/connect");
 const antiCrash = require("./src/utils/antiCrash");
 const deployCommands = require("./src/utils/deployCommands");
-const expired = require(`./src/events/expired.js`);
-const app_guard = require(`./src/events/app_guard.js`);
-const stickyRole = require(`./src/events/stickyRole.js`);
 const reminder = require(`./src/events/reminder.js`);
 const server = require("./src/utils/server");
 const logo = require("./src/assest/logo");
@@ -33,10 +30,6 @@ client.on("ready", async () => {
   ready(client, config);
   deployCommands(client, config);
   connect(client, config);
-  expired(client, config);
-  stickyRole(client, config);
-  reminder(client, config);
-  app_guard(client, config);
 
   // The directory where your slash command files are stored
   const loadCommands = (directory) => {
@@ -83,6 +76,22 @@ client.on("ready", async () => {
         const selectMenuPath = path.join(selectMenuDirectory, file);
         const selectMenu = require(selectMenuPath);
         selectMenu(client, config);
+      }
+    });
+  });
+  // The directory where your select menu files are stored
+  const eventsDirectory = path.join(__dirname, "src/events");
+  // Read all files in the directory
+  fs.readdir(eventsDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading select menu directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const eventsPath = path.join(eventsDirectory, file);
+        const events = require(eventsPath);
+        events(client, config);
       }
     });
   });

@@ -4,7 +4,6 @@ const path = require("path");
 Client.setMaxListeners(0);
 
 const config = require("./src/config");
-const ready = require("./src/utils/ready");
 const connect = require("./src/database/connect");
 const antiCrash = require("./src/utils/antiCrash");
 const deployCommands = require("./src/utils/deployCommands");
@@ -25,44 +24,11 @@ const client = new Client({
 });
 
 client.on("ready", async () => {
+  connect(client, config);
   server(client, config);
   antiCrash(client, config);
-  ready(client, config);
   deployCommands(client, config);
-  connect(client, config);
 
-  // The directory where your slash command files are stored
-  const loadCommands = (directory) => {
-    fs.readdirSync(directory).forEach((file) => {
-      const fullPath = path.join(directory, file);
-      const stat = fs.statSync(fullPath);
-
-      if (stat.isDirectory()) {
-        loadCommands(fullPath); // Recursively load commands in subdirectories
-      } else if (file.endsWith(".js")) {
-        const command = require(fullPath);
-        command(client, config);
-      }
-    });
-  };
-
-  const commandsDirectory = path.join(__dirname, "src/commands");
-  loadCommands(commandsDirectory);
-  // The directory where your buttons files are stored
-  const buttonsDirectory = path.join(__dirname, "src/buttons");
-  fs.readdir(buttonsDirectory, (error, files) => {
-    if (error) {
-      console.error("Error reading buttons directory:", error.message);
-      return;
-    }
-    files.forEach((file) => {
-      if (file.endsWith(".js")) {
-        const buttonPath = path.join(buttonsDirectory, file);
-        const button = require(buttonPath);
-        button(client, config);
-      }
-    });
-  });
   // The directory where your select menu files are stored
   const selectMenuDirectory = path.join(__dirname, "src/select menu");
   // Read all files in the directory
@@ -102,7 +68,7 @@ client.on("ready", async () => {
 
   console.log(
     `\x1b[0m`,
-    `\x1b[33m ├`,
+    `\x1b[33m 〢`,
     `\x1b[33m ${moment(Date.now()).format("LT")}`,
     `\x1b[31m ${client.user.tag}`,
     `\x1b[32m ONLINE`,
@@ -110,11 +76,45 @@ client.on("ready", async () => {
 
   console.log(
     `\x1b[0m`,
-    `\x1b[33m ├`,
+    `\x1b[33m 〢`,
     `\x1b[33m ${moment(Date.now()).format("LT")}`,
     `\x1b[31m SUN™&Co Smash Legends`,
     `\x1b[32m CHECKED`,
   );
 });
 
+client.once("ready", async () => {
+  // The directory where your slash command files are stored
+  const loadCommands = (directory) => {
+    fs.readdirSync(directory).forEach((file) => {
+      const fullPath = path.join(directory, file);
+      const stat = fs.statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        loadCommands(fullPath); // Recursively load commands in subdirectories
+      } else if (file.endsWith(".js")) {
+        const command = require(fullPath);
+        command(client, config);
+      }
+    });
+  };
+
+  const commandsDirectory = path.join(__dirname, "src/commands");
+  loadCommands(commandsDirectory);
+  // The directory where your buttons files are stored
+  const buttonsDirectory = path.join(__dirname, "src/buttons");
+  fs.readdir(buttonsDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading buttons directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const buttonPath = path.join(buttonsDirectory, file);
+        const button = require(buttonPath);
+        button(client, config);
+      }
+    });
+  });
+});
 client.login(config.token).catch((error) => ("Error:", error.message));

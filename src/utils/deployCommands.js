@@ -231,49 +231,6 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "poll",
-          description: `[Dev] Set a reminder`,
-          options: [
-            {
-              name: "channel",
-              description: "Choose channel you want to send your message in",
-              type: 7, // CHANNEL
-              required: true,
-            },
-            {
-              name: "title",
-              description: "The reminder message",
-              type: 3, // STRING
-              required: true,
-              min_length: 2,
-              max_length: 1000,
-            },
-            {
-              name: "question",
-              description: "The reminder message",
-              type: 3, // STRING
-              required: true,
-              min_length: 2,
-              max_length: 1000,
-            },
-            {
-              name: "options",
-              description:
-                "The duration of the reminder (e.g. 10s, 5m, 2h, 1d, 1mo)",
-              type: 3, // STRING
-              required: true,
-            },
-            {
-              name: "duration",
-              description: "The reminder message",
-              type: 3, // STRING
-              required: true,
-              min_length: 2,
-              max_length: 1000,
-            },
-          ],
-        },
-        {
           name: "ask",
           description: `[Dev] Ask Parfait questions`,
           options: [
@@ -319,7 +276,7 @@ module.exports = async (client, config) => {
       ]);
       console.log(
         `\x1b[0m`,
-        `\x1b[33m ├`,
+        `\x1b[33m 〢`,
         `\x1b[33m ${moment(Date.now()).format("LT")}`,
         `\x1b[31m Slash Commands`,
         `\x1b[32m LOADED`,
@@ -327,7 +284,7 @@ module.exports = async (client, config) => {
     } catch (error) {
       console.log(
         `\x1b[0m`,
-        `\x1b[33m ├`,
+        `\x1b[33m 〢`,
         `\x1b[33m ${moment(Date.now()).format("LT")}`,
         `\x1b[31m Slash Commands`,
         `\x1b[323m ERROR: ${error.message}`,

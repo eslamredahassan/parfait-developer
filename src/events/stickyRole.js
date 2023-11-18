@@ -53,7 +53,7 @@ module.exports = async (client, config) => {
   };
 
   // Run the function every hour (adjust as needed)
-  setInterval(reapplyTemporaryRoles, 3 * 1000); // 60 minutes
+  setInterval(reapplyTemporaryRoles, 5 * 1000); // 60 minutes
 
   // Other code
 };

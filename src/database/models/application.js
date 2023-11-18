@@ -11,6 +11,7 @@ const ApplicationSchema = new mongoose.Schema({
   user_why: String,
   application: String,
   thread: String,
+  status: String,
   createdIn: {
     type: Date,
     default: Date.now, // Set a default value to the current date

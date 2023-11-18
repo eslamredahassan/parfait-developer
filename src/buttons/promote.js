@@ -8,6 +8,9 @@ const errors = require("../assest/errors.js");
 const color = require("../assest/color.js");
 const emojis = require("../assest/emojis");
 
+// Database Schemas
+const Application = require("../../src/database/models/application");
+
 module.exports = async (client, config) => {
   let guild = client.guilds.cache.get(config.guildID);
   let Logo = guild.iconURL({ dynamic: true });
@@ -16,7 +19,9 @@ module.exports = async (client, config) => {
     if (interaction.isButton()) {
       switch (interaction.customId) {
         case "#ap_promote":
-          {
+          try {
+            await interaction.deferReply({ ephemeral: true });
+
             const perms = [`${config.devRole}`, `${config.STAFF}`];
             let staff = guild.members.cache.get(interaction.user.id);
             if (staff.roles.cache.hasAny(...perms)) {
@@ -65,20 +70,6 @@ module.exports = async (client, config) => {
                   ],
                 })
                 .catch(() => console.log("Error Line 2398"));
-              //// Send message after accepting member ///
-              await interaction
-                .reply({
-                  embeds: [
-                    {
-                      title: `${emojis.check} Promotion Alert`,
-                      description: `${emojis.threadMarkmid} You promoted ${ap_user} to <@&${config.TeamSun}> member\n${emojis.threadMark} Removed his application from pin list`,
-                      color: color.gray,
-                    },
-                  ],
-                  //this is the important part
-                  ephemeral: true,
-                })
-                .catch(() => console.log("Error Line 79"));
               //// Send message to log channel after promoting member ///
               const log = interaction.guild.channels.cache.get(config.log);
               await log.send({
@@ -117,6 +108,26 @@ module.exports = async (client, config) => {
                   `\x1b[33m ${moment(Date.now()).format("lll")}`,
                   `\x1b[33m SquadSUN role ADDED`,
                 );
+
+                const applicationStatus = await Application.findOneAndUpdate({
+                  userId: ap_user.id,
+                  $set: { status: "Promoted" }, // Change "status" to the field you want to update
+                  new: true,
+                });
+                //// Send message after accepting member ///
+                await interaction
+                  .editReply({
+                    embeds: [
+                      {
+                        title: `${emojis.check} Promotion Alert`,
+                        description: `${emojis.threadMarkmid} You promoted ${ap_user} to <@&${config.TeamSun}> member\n${emojis.threadMark} Removed his application from pin list`,
+                        color: color.gray,
+                      },
+                    ],
+                    //this is the important part
+                    ephemeral: true,
+                  })
+                  .catch(() => console.log("Error Line 79"));
               } catch (err) {
                 console.log(
                   `\x1b[31m  〢`,
@@ -128,7 +139,7 @@ module.exports = async (client, config) => {
               }
             } else {
               await interaction
-                .reply({
+                .editReply({
                   embeds: [
                     {
                       title: `${emojis.alert} Permission denied`,
@@ -139,7 +150,7 @@ module.exports = async (client, config) => {
                   //this is the important part
                   ephemeral: true,
                 })
-                .catch(() => console.log("Error Line 2439"));
+                .catch((error) => console.log(error.message));
               console.log(
                 `\x1b[0m`,
                 `\x1b[31m 🛠`,
@@ -147,6 +158,12 @@ module.exports = async (client, config) => {
                 `\x1b[33m Permission denied`,
               );
             }
+          } catch (error) {
+            console.error("Error occurred:", error.message);
+            await interaction.editReply({
+              content: "Oops! There was an error processing your request.",
+              ephemeral: true,
+            });
           }
           break;
         default:

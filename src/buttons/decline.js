@@ -8,12 +8,14 @@ const {
 const moment = require("moment");
 const wait = require("util").promisify(setTimeout);
 
-const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 const messages = require("../assest/messages.js");
 const banners = require("../assest/banners.js");
 const errors = require("../assest/errors.js");
 const color = require("../assest/color.js");
 const emojis = require("../assest/emojis");
+// Database Schemas
+const Application = require("../../src/database/models/application");
+const TemporaryRole = require("../../src/database/models/TemporaryRoleModel");
 
 module.exports = async (client, config) => {
   let guild = client.guilds.cache.get(config.guildID);
@@ -21,14 +23,14 @@ module.exports = async (client, config) => {
   client.on("interactionCreate", async (interaction) => {
     if (interaction.isButton()) {
       switch (interaction.customId) {
-        case "#ap_reject": {
+        case "#ap_decline": {
           const ID = interaction.message.embeds[0].footer.text;
           const user = await interaction.guild.members.fetch(ID);
 
           //// Modal application code ///
           let reply_modal = new Modal()
             .setTitle(`Rejection reason of ${user.user.username}`)
-            .setCustomId(`ap_reject`);
+            .setCustomId(`ap_decline`);
 
           const ap_reason = new TextInputComponent()
             .setCustomId("ap_reason")
@@ -71,9 +73,10 @@ module.exports = async (client, config) => {
       }
     }
     //// Send application results in review room ////
-    if (interaction.customId === "ap_reject") {
+    if (interaction.customId === "ap_decline") {
       let reply = interaction.fields.getTextInputValue("ap_reason");
 
+      await interaction.deferReply({ ephemeral: true });
       /// Embed of data in review room ///
       let embed = new MessageEmbed(interaction.message.embeds[0])
         .setTitle(`${emojis.alert} Rejected by ${interaction.user.username}`)
@@ -141,23 +144,11 @@ module.exports = async (client, config) => {
           ],
         });
       } catch (e) {
-        return await interaction.reply({
+        return await interaction.editReply({
           content: `The ${user} Dms Were Closed.`,
           ephemeral: true,
         });
       }
-      //// Send reply message after rejecting member ///
-      await interaction.reply({
-        embeds: [
-          {
-            title: `${emojis.cross} Rejection Alert`,
-            description: `${emojis.threadMarkmid} You rejected ${ap_user.user} from joining **${interaction.guild.name}**\n${emojis.threadMarkmid} Removed his application from pin list\n${emojis.threadMark} His thread will be automatically archived in \`\`20 Seconds\`\``,
-            color: color.gray,
-          },
-        ],
-        //this is the important part
-        ephemeral: true,
-      });
       /// Console Action ///
       console.log(
         `\x1b[0m`,
@@ -206,11 +197,29 @@ module.exports = async (client, config) => {
       /// Rename The Thread ///
       await threadName.setName("🧤︱" + `${userName}` + " Rejected");
       /// Lock the thread ///
-      await wait(5000); // ** cooldown 10 seconds ** \\
+      await wait(1000); // ** cooldown 10 seconds ** \\
       await threadName.setLocked(true);
       /// Archive the thread ///
-      await wait(8000); // ** cooldown 10 seconds ** \\
+      await wait(2000); // ** cooldown 10 seconds ** \\
       await threadName.setArchived(true);
+      //// Send reply message after rejecting member ///
+
+      const applicationStatus = await Application.findOneAndUpdate({
+        userId: ap_user.id,
+        $set: { status: "Declined" }, // Change "status" to the field you want to update
+        new: true,
+      });
+      await interaction.editReply({
+        embeds: [
+          {
+            title: `${emojis.cross} Rejection Alert`,
+            description: `${emojis.threadMarkmid} You rejected ${user} from joining **${interaction.guild.name}**\n${emojis.threadMarkmid} Removed his application from pin list\n${emojis.threadMark} His thread will be automatically archived in \`\`20 Seconds\`\``,
+            color: color.gray,
+          },
+        ],
+        //this is the important part
+        ephemeral: true,
+      });
     }
   });
 };

@@ -16,7 +16,8 @@ module.exports = async (client, config) => {
     if (interaction.isButton()) {
       switch (interaction.customId) {
         case "#silent_reject":
-          {
+          try {
+            await interaction.deferReply({ ephemeral: true });
             //// Check the permissions ///
             const perms = [`${config.devRole}`, `${config.STAFF}`];
             let staff = guild.members.cache.get(interaction.user.id);
@@ -39,20 +40,6 @@ module.exports = async (client, config) => {
               //// Get user id from the footer ///
               const ID = interaction.message.embeds[0].footer.text;
               const ap_user = await interaction.guild.members.fetch(ID);
-              //// Send reply message after rejecting member ///
-              await interaction
-                .reply({
-                  embeds: [
-                    {
-                      title: `${emojis.cross} Rejection Alert`,
-                      description: `${emojis.threadMarkmid} You rejected ${ap_user.user} from joining **${interaction.guild.name}** silently\n${emojis.threadMarkmid} Removed his application from pin list\n${emojis.threadMark} His thread will be automatically archived in \`\`20 Seconds\`\``,
-                      color: color.gray,
-                    },
-                  ],
-                  //this is the important part
-                  ephemeral: true,
-                })
-                .catch(() => console.log("Error Line 58"));
               //// Send message to log channel after rejecting member ///
               const log = interaction.guild.channels.cache.get(config.log);
               await log.send({
@@ -110,9 +97,28 @@ module.exports = async (client, config) => {
                 `\x1b[34m ${ap_user.user.username}`,
                 `\x1b[32m REJECTED BY ${interaction.user.username}`,
               );
+              const applicationStatus = await Application.findOneAndUpdate({
+                userId: ap_user.id,
+                $set: { status: "Declined Silently" }, // Change "status" to the field you want to update
+                new: true,
+              });
+              //// Send reply message after rejecting member ///
+              await interaction
+                .editReply({
+                  embeds: [
+                    {
+                      title: `${emojis.cross} Rejection Alert`,
+                      description: `${emojis.threadMarkmid} You rejected ${user} from joining **${interaction.guild.name}** silently\n${emojis.threadMarkmid} Removed his application from pin list\n${emojis.threadMark} His thread will be automatically archived in \`\`20 Seconds\`\``,
+                      color: color.gray,
+                    },
+                  ],
+                  //this is the important part
+                  ephemeral: true,
+                })
+                .catch(() => console.log("Error Line 58"));
             } else {
               await interaction
-                .reply({
+                .editReply({
                   embeds: [
                     {
                       title: `${emojis.alert} Permission denied`,
@@ -131,6 +137,12 @@ module.exports = async (client, config) => {
                 `\x1b[33m Permission denied`,
               );
             }
+          } catch (error) {
+            console.error("Error occurred:", error.message);
+            await interaction.editReply({
+              content: "Oops! There was an error processing your request.",
+              ephemeral: true,
+            });
           }
           break;
         default:

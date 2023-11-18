@@ -9,7 +9,7 @@ module.exports = async (client, config) => {
     const applyChannel = client.channels.cache.get(config.applyChannel);
 
     applyChannel.messages
-      .fetch({ limit: 10 })
+      .fetch({ limit: 2 })
       .then((messages) => {
         messages.forEach((message) => {
           if (message.embeds.length > 0) {
@@ -33,5 +33,5 @@ module.exports = async (client, config) => {
         });
       })
       .catch(console.error);
-  }, 5000);
+  }, 20 * 1000);
 };

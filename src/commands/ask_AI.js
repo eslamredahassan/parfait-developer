@@ -7,9 +7,16 @@ module.exports = async (client) => {
   client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) return;
     if (interaction.commandName === "ask") {
-      await interaction.deferReply({ ephemeral: false });
+      await interaction.deferReply({ ephemeral: true });
       const openai = new OpenAI({ apiKey: process.env.OpenAI_Key });
       const question = interaction.options.getString("question");
+
+      // Initial system and user messages
+      const conversation = [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: "You are a female assistant." },
+        { role: "user", content: question },
+      ];
 
       const howOldQuestion = [
         `How dare you ask a beautiful lady her age!`,
@@ -53,7 +60,6 @@ module.exports = async (client) => {
         "what should I do in the trial period?": fieldsText.doInPeriod,
         "what will happen after I finish my trial period?":
           fieldsText.finishPeriod,
-        "what will happen when my application gets rejected?": test,
         //------------------------------------------------------------------------------------------------//
 
         //------------------------------------------| Tools Chat |----------------------------------------//
@@ -72,21 +78,36 @@ module.exports = async (client) => {
       try {
         const response = await openai.chat.completions.create({
           model: "gpt-3.5-turbo",
-          //prompt: question,
-          messages: [
-            { role: "system", content: "You are a helpful assistant." },
-            { role: "system", content: "You are a female assistant." },
-            { role: "user", content: question },
-          ],
-          max_tokens: 1000,
-          temperature: 0.7,
+          messages: conversation,
+          max_tokens: 2000, // Set a higher limit
+          temperature: 0.5,
           top_p: 1,
-          stop: "\n",
+          //stop: "\n",
         });
 
-        const answer = response.choices[0].message;
+        const content = String(response.choices[0].message.content);
 
-        await interaction.editReply(answer);
+        // Split the content into chunks of 2000 characters or less
+        const chunks = [];
+        for (let i = 0; i < content.length; i += 2000) {
+          chunks.push(content.substring(i, i + 2000));
+        }
+
+        // Send each chunk as a separate message with a delay
+        for (const [index, chunk] of chunks.entries()) {
+          if (chunk.trim() !== "") {
+            // Send typing indicator
+
+            // Adding a delay before sending the message (adjust as needed)
+            //await new Promise((resolve) => setTimeout(resolve, 600));
+
+            await interaction.followUp({
+              content: chunk.trim(),
+              ephemeral: true,
+              fetchReply: true,
+            });
+          }
+        }
       } catch (error) {
         console.error(error.message);
         await interaction.followUp(

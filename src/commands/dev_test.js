@@ -120,6 +120,10 @@ module.exports = async (client, config) => {
 
         ctx.fillText(`${username}`, x, y);
 
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `12px BebasNeue Regular`;
+        ctx.fillText(`ALL RIGHTS SAVED TO IEGYGAMERI AND SUN&CO`, 299, 760);
+
         const avatarURL = interaction.user.displayAvatarURL({
           format: "jpg",
         });

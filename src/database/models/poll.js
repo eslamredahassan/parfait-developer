@@ -3,9 +3,12 @@ const mongoose = require("mongoose");
 const pollSchema = new mongoose.Schema({
   title: String,
   question: String,
-  pollId: String,
   options: [String],
-  expiry: Date,
+  votes: [String],
+  expire: Date,
+  channel: String,
+  pollId: String,
+  createdBy: String,
 });
 
 const Poll = mongoose.model("Poll", pollSchema);

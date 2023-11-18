@@ -7,6 +7,7 @@ const banners = require("../assest/banners.js");
 const errors = require("../assest/errors.js");
 const color = require("../assest/color.js");
 const emojis = require("../assest/emojis");
+const Application = require("../../src/database/models/application");
 
 module.exports = async (client, config) => {
   let guild = client.guilds.cache.get(config.guildID);
@@ -120,7 +121,7 @@ module.exports = async (client, config) => {
                 (x) => x.name === `${"🧤︱" + userName + " Tryout"}`,
               );
               /// Rename The Thread ///
-              await threadName.setName("🧤︱" + `${userName}` + " Accepted");
+              await threadName.setName("🧤︱" + `${userName}` + " Approved");
               /// Lock the thread ///
               await wait(5000); // ** cooldown 10 seconds ** \\
               await threadName.setLocked(true);

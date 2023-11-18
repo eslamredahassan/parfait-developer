@@ -63,8 +63,10 @@ client.on("ready", async () => {
   });
 
   // ------------ Interactions ------------ //
-  const questions = require(`./src/interaction/questions`)(client, config);
-  const qna = require(`./src/interaction/qna`)(client, config);
+  const smart_questions = require(`./src/interaction/smart_questions`)(
+    client,
+    config,
+  );
   // -------------------------------------//
 
   console.log(

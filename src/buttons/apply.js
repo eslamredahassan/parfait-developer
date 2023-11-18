@@ -317,7 +317,7 @@ module.exports = async (client, config) => {
         new MessageButton()
           .setStyle(2)
           .setDisabled(false)
-          .setCustomId("#thread_start")
+          .setCustomId("#ap_questions")
           .setLabel(`Continue`)
           .setEmoji(emojis.next),
       ]);

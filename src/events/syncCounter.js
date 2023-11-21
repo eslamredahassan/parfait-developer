@@ -33,5 +33,5 @@ module.exports = async (client, config) => {
         });
       })
       .catch(console.error);
-  }, 20 * 1000);
+  }, 50 * 1000);
 };

@@ -28,7 +28,6 @@ client.on("ready", async () => {
   server(client, config);
   antiCrash(client, config);
   deployCommands(client, config);
-
   // The directory where your select menu files are stored
   const selectMenuDirectory = path.join(__dirname, "src/select menu");
   // Read all files in the directory

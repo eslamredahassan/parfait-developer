@@ -245,43 +245,20 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "app-manager",
-          description: `[Dev] Manage applications`,
+          name: "applications",
+          description: `[Dev] Manage recruitment applications`,
+          required: true,
           options: [
             {
-              name: "username",
-              description: "Get application by Smash Code",
+              name: "find",
+              description:
+                "Search for application by username, user id, smash code, or application id",
               type: 3, // STRING
-              required: false,
-              min_length: 2,
-              max_length: 1000,
-            },
-            {
-              name: "user-id",
-              description: "Get application by Smash Code",
-              type: 3, // STRING
-              required: false,
-              min_length: 2,
-              max_length: 1000,
-            },
-            {
-              name: "smash-code",
-              description: "Get application by Smash Code",
-              type: 3, // STRING
-              required: false,
-              min_length: 2,
-              max_length: 1000,
-            },
-            {
-              name: "application",
-              description: "Get application by Smash Code",
-              type: 3, // STRING
-              required: false,
+              required: true,
               min_length: 2,
               max_length: 1000,
             },
           ],
-          required: true,
         },
         {
           name: "parfait",

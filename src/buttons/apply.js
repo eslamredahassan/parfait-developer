@@ -136,6 +136,41 @@ module.exports = async (client, config) => {
           ephemeral: true,
         });
       }
+
+      //// Create Thread ///
+      let applyChannel = interaction.guild.channels.cache.get(
+        config.applyChannel,
+      );
+      if (!applyChannel) return;
+
+      const user = interaction.user;
+      const userName = user.username;
+
+      const thread = await applyChannel.threads.create({
+        name: "🧤︱" + userName + " Tryout",
+        autoArchiveDuration: 10080,
+        type: "GUILD_PRIVATE_THREAD",
+        reason: `${emojis.app} ${user} Requests to join SUN`,
+      });
+
+      const threads = applyChannel.threads.cache.find(
+        (x) => x.name === "🧤︱" + userName + " Tryout",
+      );
+
+      await threads.members
+        .add(user)
+        .catch((error) =>
+          console.log("Error in added member to his thread", error.message),
+        );
+
+      console.log(
+        `\x1b[0m`,
+        `\x1b[31m ├`,
+        `\x1b[33m ${moment(Date.now()).format("lll")}`,
+        `\x1b[32m Created thread`,
+        `\x1b[35m ${thread.name}`,
+      );
+
       let finishChannel = interaction.guild.channels.cache.get(
         config.finishChannel,
       );
@@ -233,6 +268,11 @@ module.exports = async (client, config) => {
             inline: false,
           },
           {
+            name: `${emojis.thread} Tryout thread`,
+            value: `${emojis.threadMark} ${thread}` || "``N/A``",
+            inline: false,
+          },
+          {
             name: `${emojis.time} Requested Since`,
             value: `${emojis.threadMark} <t:${Math.floor(
               Date.now() / 1000,
@@ -273,29 +313,18 @@ module.exports = async (client, config) => {
           `\x1b[35m${user_why}`,
         );
 
-      //// Create Thread ///
-      let applyChannel = interaction.guild.channels.cache.get(
-        config.applyChannel,
+      //// Add Waitlist Role ///
+      await interaction.member.roles
+        .add(config.waitRole)
+        .catch(() => console.log("Error Line 3478"));
+      const waitRole = interaction.guild.roles.cache.get(config.waitRole);
+      console.log(
+        `\x1b[0m`,
+        `\x1b[31m └`,
+        `\x1b[33m ${moment(Date.now()).format("lll")}`,
+        `\x1b[34m Added ${waitRole.name} To`,
+        `\x1b[34m ${interaction.user.username}`,
       );
-      if (!applyChannel) return;
-
-      const user = interaction.user;
-      const userName = user.username;
-
-      const thread = await applyChannel.threads.create({
-        name: "🧤︱" + userName + " Tryout",
-        autoArchiveDuration: 10080,
-        type: "GUILD_PRIVATE_THREAD",
-        reason: `${emojis.app} ${user} Requests to join SUN`,
-      });
-
-      const threads = applyChannel.threads.cache.find(
-        (x) => x.name === "🧤︱" + userName + " Tryout",
-      );
-
-      await threads.members
-        .add(user)
-        .catch(() => console.log("Error Line 3385"));
 
       //// Send reply messge after applying ///
       await interaction.update({
@@ -329,14 +358,6 @@ module.exports = async (client, config) => {
         content: `${emojis.pinkDot} Hi ${user} We need to complete some information in your application\n${emojis.threadMarkmid} Press continue to start see the questions\n${emojis.threadMarkmid} Answer each question separately after using the reply button\n${emojis.threadMarkmid} Skipping the questions or spamming the button causes your application to be rejected\n${emojis.threadMark} Your answers most be in **English**`,
         components: [controller],
       });
-
-      console.log(
-        `\x1b[0m`,
-        `\x1b[31m ├`,
-        `\x1b[33m ${moment(Date.now()).format("lll")}`,
-        `\x1b[32m Created thread`,
-        `\x1b[35m ${thread.name}`,
-      );
 
       if (finishChannel.id) {
         const app = await finishChannel
@@ -433,19 +454,6 @@ module.exports = async (client, config) => {
       }
 
       ////----------------------------////
-
-      //// Add Waitlist Role ///
-      await interaction.member.roles
-        .add(config.waitRole)
-        .catch(() => console.log("Error Line 3478"));
-      const waitRole = interaction.guild.roles.cache.get(config.waitRole);
-      console.log(
-        `\x1b[0m`,
-        `\x1b[31m └`,
-        `\x1b[33m ${moment(Date.now()).format("lll")}`,
-        `\x1b[34m Added ${waitRole.name} To`,
-        `\x1b[34m ${interaction.user.username}`,
-      );
       ////----------------------------////
     }
   });

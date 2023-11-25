@@ -100,7 +100,9 @@ module.exports = async (client, config) => {
               );
               const applicationStatus = await Application.findOneAndUpdate({
                 userId: ap_user.id,
-                $set: { status: "Declined Silently" }, // Change "status" to the field you want to update
+                $set: {
+                  status: `Declined Silently by ${interaction.user.username}`,
+                }, // Change "status" to the field you want to update
                 new: true,
               });
               //// Send reply message after rejecting member ///

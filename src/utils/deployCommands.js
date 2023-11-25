@@ -250,9 +250,9 @@ module.exports = async (client, config) => {
           required: true,
           options: [
             {
-              name: "find",
+              name: "search",
               description:
-                "Search for application by username, user id, smash code, or application id",
+                "Search for recruitment application by username, user id, smash code, or application id",
               type: 3, // STRING
               required: true,
               min_length: 2,

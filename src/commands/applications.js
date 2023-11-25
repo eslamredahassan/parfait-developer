@@ -19,7 +19,7 @@ module.exports = async (client, config) => {
       const { commandName, options } = interaction;
 
       if (commandName === "applications") {
-        const searchOption = options.getString("find");
+        const searchOption = options.getString("search");
 
         await interaction.deferReply({ ephemeral: true });
         try {
@@ -65,51 +65,47 @@ module.exports = async (client, config) => {
             fields: [
               {
                 name: `${emojis.discord} Discord Profile`,
-                value: `${emojis.threadMark} ${app_user.user}` || "``N/A``",
+                value: `${emojis.threadMark} ${app_user.user}` || "N/A",
                 inline: true,
               },
               {
                 name: `${emojis.id} Smash Code`,
                 value:
-                  `${emojis.threadMark} ||${application.user_code}||` ||
-                  "``N/A``",
+                  `${emojis.threadMark} ||${application.user_code}||` || "N/A",
                 inline: true,
               },
               {
                 name: `${emojis.competition} Competitions/Trainings`,
                 value:
                   `${emojis.threadMark} \`\`${application.user_ct}\`\`` ||
-                  "``N/A``",
+                  "N/A",
                 inline: false,
               },
               {
                 name: `${emojis.age} Age`,
                 value: `${emojis.threadMark} \`\`${
-                  application.user_age
-                    ? application.user_age.toString()
-                    : "``N/A``"
-                }\`\``,
+                  application.user_age ? application.user_age.toString() : "N/A"
+                }\`\` years old`,
                 inline: false,
               },
               {
                 name: `${emojis.favorites} Favorite Legends`,
                 value:
                   `${emojis.threadMark} \`\`${application.user_legends}\`\`` ||
-                  "``N/A``",
+                  "N/A",
                 inline: false,
               },
               {
                 name: `${emojis.question} What can you bring to SUN ?`,
                 value:
                   `${emojis.threadMark} \`\`${application.user_why}\`\`` ||
-                  "``N/A``",
+                  "N/A",
 
                 inline: false,
               },
               {
                 name: `${emojis.thread} Tryout thread`,
-                value:
-                  `${emojis.threadMark} <#${application.thread}>` || "``N/A``",
+                value: `${emojis.threadMark} <#${application.thread}>` || "N/A",
                 inline: false,
               },
               {
@@ -118,7 +114,7 @@ module.exports = async (client, config) => {
                   `${emojis.threadMark} <t:${Math.floor(
                     application.createdIn / 1000,
                   )}:D> - <t:${Math.floor(application.createdIn / 1000)}:R>` ||
-                  "``N/A``",
+                  "N/A",
                 inline: false,
               },
             ],

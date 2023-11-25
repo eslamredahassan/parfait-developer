@@ -245,9 +245,43 @@ module.exports = async (client, config) => {
           ],
         },
         {
-          name: "end_poll",
-          description: `[Dev] Test`,
-          type: "CHAT_INPUT",
+          name: "app-manager",
+          description: `[Dev] Manage applications`,
+          options: [
+            {
+              name: "username",
+              description: "Get application by Smash Code",
+              type: 3, // STRING
+              required: false,
+              min_length: 2,
+              max_length: 1000,
+            },
+            {
+              name: "user-id",
+              description: "Get application by Smash Code",
+              type: 3, // STRING
+              required: false,
+              min_length: 2,
+              max_length: 1000,
+            },
+            {
+              name: "smash-code",
+              description: "Get application by Smash Code",
+              type: 3, // STRING
+              required: false,
+              min_length: 2,
+              max_length: 1000,
+            },
+            {
+              name: "application",
+              description: "Get application by Smash Code",
+              type: 3, // STRING
+              required: false,
+              min_length: 2,
+              max_length: 1000,
+            },
+          ],
+          required: true,
         },
         {
           name: "parfait",

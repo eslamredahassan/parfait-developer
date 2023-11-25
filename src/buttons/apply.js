@@ -365,6 +365,7 @@ module.exports = async (client, config) => {
 
             existingApplication.username = interaction.user.username;
             existingApplication.user_code = user_code;
+            existingApplication.user_age = user_age;
             existingApplication.user_ct = user_ct;
             existingApplication.user_legends = user_legends;
             existingApplication.user_why = user_why;
@@ -387,8 +388,8 @@ module.exports = async (client, config) => {
             const newApplication = new Application({
               userId: interaction.user.id,
               username: interaction.user.username,
+              user_age,
               user_code,
-              user_ct,
               user_ct,
               user_legends,
               user_why,

@@ -30,6 +30,8 @@ module.exports = async (client, config) => {
       switch (interaction.commandName) {
         case "about":
           {
+            await interaction.deferReply({ ephemeral: true });
+
             console.log(
               `\x1b[0m`,
               `\x1b[31m 〢`,
@@ -61,7 +63,7 @@ module.exports = async (client, config) => {
                 .setEmoji(emojis.dev),
             ]);
 
-            await interaction.reply({
+            await interaction.editReply({
               embeds: [
                 new MessageEmbed()
                   .setColor(color.gray)

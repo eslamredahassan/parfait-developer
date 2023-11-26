@@ -4,7 +4,7 @@ const config = require("../config");
 
 module.exports = async () => {
   // Connect to MongoDB
-  mongoose
+  await mongoose
     .connect(config.database, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

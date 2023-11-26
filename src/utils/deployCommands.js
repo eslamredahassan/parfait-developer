@@ -284,6 +284,16 @@ module.exports = async (client, config) => {
             },
           ],
         },
+        // Add the Application context menu
+        {
+          name: "Find application",
+          type: 2,
+        },
+        // Add the Translate context menu
+        {
+          name: "User Info",
+          type: 2,
+        },
       ]);
       console.log(
         `\x1b[0m`,

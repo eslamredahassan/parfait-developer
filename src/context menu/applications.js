@@ -8,7 +8,12 @@ const emojis = require("../assest/emojis");
 
 module.exports = async (client, config) => {
   client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (
+      !interaction.isContextMenu() ||
+      interaction.commandName !== "Find application"
+    ) {
+      return;
+    }
 
     let guild = client.guilds.cache.get(config.guildID);
     const perms = [
@@ -18,12 +23,12 @@ module.exports = async (client, config) => {
     ];
     let staff = guild.members.cache.get(interaction.user.id);
     if (staff.roles.cache.hasAny(...perms)) {
-      const { commandName, options } = interaction;
+      const { commandName, targetId } = interaction;
 
-      if (commandName === "applications") {
-        const searchOption = options.getString("search");
+      if (commandName === "Find application") {
+        const searchOption = targetId;
 
-        await interaction.deferReply({ ephemeral: true });
+        //await interaction.deferReply({ ephemeral: true });
         try {
           let filter;
 
@@ -45,8 +50,8 @@ module.exports = async (client, config) => {
           const application = await Application.findOne(filter);
 
           if (!application) {
-            interaction.editReply({
-              content: `I didn't find any application for \`\`${searchOption}\`\` in my database.`,
+            interaction.reply({
+              content: `I didn't find any application for <@${searchOption}> in my database.`,
               ephemeral: true,
             });
             return;
@@ -127,20 +132,20 @@ module.exports = async (client, config) => {
             },
           };
 
-          interaction.editReply({
+          interaction.reply({
             embeds: [embed],
             components: [],
             ephemeral: true,
           });
         } catch (error) {
           console.error("Error fetching data:", error.message);
-          interaction.editReply({
+          interaction.reply({
             content: "Error fetching data. Please try again later.",
             ephemeral: true,
           });
         }
       } else {
-        await interaction.editReply({
+        await interaction.reply({
           embeds: [
             {
               title: `${emojis.alert} Permission denied`,
@@ -148,7 +153,6 @@ module.exports = async (client, config) => {
               color: color.gray,
             },
           ],
-          //this is the important part
           ephemeral: true,
         });
         console.log(

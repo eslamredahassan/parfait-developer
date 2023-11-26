@@ -17,6 +17,7 @@ const client = new Client({
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_PRESENCES,
     Intents.FLAGS.DIRECT_MESSAGES,
     Intents.FLAGS.MESSAGE_CONTENT,
   ],
@@ -61,6 +62,21 @@ client.on("ready", async () => {
     });
   });
 
+  const contextDirectory = path.join(__dirname, "src/context menu");
+  // Read all files in the directory
+  fs.readdir(contextDirectory, (error, files) => {
+    if (error) {
+      console.error("Error reading select menu directory:", error.message);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".js")) {
+        const contextPath = path.join(contextDirectory, file);
+        const context = require(contextPath);
+        context(client, config);
+      }
+    });
+  });
   // ------------ Interactions ------------ //
   const smart_questions = require(`./src/interaction/smart_questions`)(
     client,
